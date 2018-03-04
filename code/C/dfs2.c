@@ -180,4 +180,6 @@ print:
 void main()
 {
     warnsdorff_role(board, ROWS, COLS, 2, 0);
+    printf("ok");
 }
+
