@@ -28,7 +28,6 @@ void dfs(int x, int y, int cnt)
         {
             map[nx][ny] = cnt + 1;
             dfs(nx, ny, cnt + 1);
-            // if find then no return
             map[nx][ny] = 0;
         }
     }
@@ -57,6 +56,5 @@ int main(int argc, char *argv[])
     dfs(bx, by, 1);
     if (!flag)
         printf("can't reach\n");
-
     return 1;
 }
