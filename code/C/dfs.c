@@ -58,5 +58,5 @@ int main(int argc, char *argv[])
     if (!flag)
         printf("can't reach\n");
 
-    return 0;
+    return 1;
 }
