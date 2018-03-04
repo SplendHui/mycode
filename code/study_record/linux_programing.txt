@@ -1,0 +1,65 @@
+14章信号量、共享内存和消息队列：
+
+    信号量：
+        函数：
+            semget:通过id获取唯一标示
+            semctl:对标示进行控制，设置初始值，默认1，只有一个进程可以访问临界区
+            semop：对信号量进行操作，P和V，即加1和减1操作。
+        使用步骤：
+            1、先通过semget获取标示
+            2、通过semctl进行初始化值
+            3、通过semop进行操作，进入临界区减一，退出临界区加一。
+    共享内存：
+        函数:
+            shmget:获取共享内存唯一标示
+            shmat:返回共享内存标示，内存指针
+            shmdt:将共享内存从进程中剥离，
+            shmctl:三种操作，IPC_STAT、IPC_SET、IPC_RMID
+使用步骤：
+            1、shmget获取唯一标示
+            2、shmat返回共享内存地址
+            3、用完用shmdt进行剥离
+            4、删除共享内存标示。
+    消息队列：
+        函数：
+            msgget：获取队列标示
+            msgctl：通过get的标示进行控制、同共享内存一样。三个操作
+            msgsnd：通过get到的标示进行发送消息
+            msgrcv：通过get到的标示进行接受消息
+        使用步骤：
+            1、msgget获取标示
+            2、然后msgrcv接受消息
+            3、msgsnd发送消息
+            4、最后msgctl删除队列
+        特点：
+            发送者可以发完消息后直接退出。
+15章Socket:
+    套接字属性：
+        1、套接字域：常见域 AF_INET指因特网
+        2、套接字类型：流、数据报，流用SOCK_STREAM数据包SOCK_DGRAM
+        3、套接字：linux和unix默认底层协议，不需要特定特地制定
+
+    常用函数：
+        socket：创建套接字文件。主要有域、类型、协议
+        bind：把套接字绑定到相应的地址上。
+            地址结构：
+                struct sockaddr_un:AF_UNIX类型
+                struct sockaddr_in:AF_INET类型
+                    AF_INET
+                    PORT
+                    ADDRESS 
+            地址转换用到的函数：
+                htonl: htonl(INADDR_ANY)
+                htons: htons(9734)
+        listen：服务器创建队列保存未处理的请求
+        accept：从队列中处理队列中的请求
+
+        select:允许程序同时在多个底层文件描述符上等待输入的到达。
+
+
+        数据包：
+            函数：
+                sendto:消息发送
+                recvfrom:消息接受
+            特点：
+                不需要进行建立连接, 不可靠传输

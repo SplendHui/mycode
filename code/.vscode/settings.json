@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "pthread.h": "c"
+    },
+    "python.linting.enabled": false
+}

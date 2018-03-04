@@ -1,0 +1,91 @@
+    iozone -a -n 512m -g 4G -i 0 -i 1 -i 5 -f /tmp/iozone -Rb ./iozone.xls
+    
+    
+    sar -n SOCK
+    tosck:系统持有的socket个数
+    tcpsck:当前使用的tcp socket的个数
+    ip-frag:当前使用的ip分片个数
+    tcp-tw:处于timewait状态的tcp套接字的个数
+
+    lsof -i 192.168.0.1:80
+    lsof -i :80
+    lsof -l
+    lsof -u username
+    netstat -tun | grep awk "/^tcp/{state[$NF]++}END{for (S in state) print state[S],S}" | sort -n
+    dstat :强大无比
+
+    网络优化参数：
+    net.ipv4.tcp_max_tw_buckets
+    timewait的数量，默认为8192
+
+    net.ipv4.ip_local_port_range=1024 65000
+    允许系统打开的端口的方位，前为下限，后为上限；默认个为“32768 6100”
+    注意：此可用方位决定了最后timewait状态连接的数量；下面两项可以有效降低tw状态的数量
+
+    net.ipv4.tcp_tw_recycle = {0|1}
+    是否启用timewait快速回收;开启此功能在NAT环境下将可能出现严重问题，因为tcp有一种行为，它可以缓存每个连接的最新时间戳，后续请求中如果时间小于
+    缓存中的时间戳，就会被视为无效并且丢弃相应的请求报文，linux是否启用这种行为取决tcp_timestams和tcp_tw_recycle，而前一个是默认开启的而启用后面的
+    就会激活此功能因此默认nat环境下是禁用recycle的。一般只有通过降低tw_buckets来解决timewait数量问题;
+
+    net.ipv4.tcp_tw_reuse = {0|1}
+    是否启用tw重用，即是否将timewait sockets用于新的tcp连接
+
+    net.ipv4.tcp_syncookies = {0|1} 
+    是否启用SYN Cookie，即当syn等待队列溢出时，是否启用cookies功能
+
+    net.ipv4.tcp_timestamps = 0
+    tcp报文时间戳，关闭时可以避免序列号的卷绕
+
+
+    net.ipv4.tcp_max_syn_backlog = 262144
+    保存的那些尚为收到客户端确认信息的连接请求的最大值，默认128，可以增大此值；
+    
+    net.ipv4.tcp_synack_retries = #
+    为了打开对端的连接，内核需要发送一个syn并且附带回应前面的一个syn的ack，三次握手中的第二次，这个设置决定了内核发送syn+ack
+    包的数量，繁忙的服务器通常为0或者1
+
+    net.ipv4.tcp_ack_retries = #
+    在内核放弃建立连接之前发送syn包的数量，通常0或1,三次握手的第一次，通常主动连接有用
+
+    net.ipv4.tcp_max_orphans=262144
+    系统中最多有多少个tcp套接字不被关联到任何一个用户文件句柄上，如果超过这个数字，孤儿连接将即可被复位打印警告信息
+    这个限制仅仅为了繁殖简单的dos攻击，不能过分依靠它，或者认为减少这个值。在确保可用内存的前提下，适当增大。
+
+
+    net.ipv4.tcp_fin_timeout=1
+
+
+    net.ipv4.tcp_keepalive_time = #
+
+    net.core.rmem_max = 8388608
+    net.core.rmem_default = 8388608
+    net.core.wmem_max = 8388608
+    net.core.wmem_default = 8388608
+
+    net.ipv4.tcp_mem = "8388608 8388608 8388608"
+
+    net.ipv4.tcp_rmem = "4096 87380 8388608"
+
+    net.ipv4.tcp_wmem = "4096 87380 8388608"
+
+
+
+进程调度:
+    SCHED_FIFO
+    SCHED_RR
+        chrt -f|-r # program
+    SCHED_NORMAL
+        SCHED_OTHER
+        nice -n # program
+        renice # pid
+
+
+    开启os，向内核传递参数，
+        隔离专用物理核心:隔离cpu，然后专门使用
+        隔离终端：将cpu从中断中隔离出来
+    
+    隔离cpu:isolcpus = cup number, ...., cpu number
+        /etc/grub.conf
+    隔离中断:echo cpu_mask > /proc/irq/<irq_num>/smp_affinity
+
+    使用taskset 进行绑定
