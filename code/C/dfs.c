@@ -48,7 +48,6 @@ void printMatrix()
 int main(int argc, char *argv[])
 {
     int bx, by;
-
     printf("input horse begin x and y \n");
     scanf("%d%d", &bx, &by);
     map[bx][by] = 1;
