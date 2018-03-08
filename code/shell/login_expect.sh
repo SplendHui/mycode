@@ -1,5 +1,5 @@
 #########################################################################
-# File Name: exp.sh
+# File Name: login_expect.sh
 # Author: splend
 # mail: 752406912@qq.com
 # Created Time: Wed 07 Mar 2018 16:09:10 CST
