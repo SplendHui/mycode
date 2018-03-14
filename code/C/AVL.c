@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <time.h>
 
 #define OK 1
 #define ERROR 0
@@ -294,7 +296,7 @@ void InOrderTraverse(BiTree t)
     if (t)
     {
         InOrderTraverse(t->lchild);
-        printf("%d  ", t->data);
+        printf("%d\n", t->data);
         InOrderTraverse(t->rchild);
     }
 }
@@ -303,11 +305,17 @@ int main(void)
 {
     int i;
     int a[10] = {3, 2, 1, 4, 5, 6, 7, 10, 9, 8};
+    int *array = (int *)malloc(10000 * sizeof(int));
+    srand(time(NULL));
+    for (i = 0; i < 10000; i++)
+    {
+        *(array + i) = i + random() % 100000;
+    }
     BiTree T = NULL;
     Status taller;
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < 10000; i++)
     {
-        InsertAVL(&T, a[i], &taller);
+        InsertAVL(&T, array[i], &taller);
     }
     printf("中序遍历二叉平衡树:\n");
     InOrderTraverse(T);
