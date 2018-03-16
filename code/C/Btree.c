@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <stdlib.h>
 #define M 3
 #define Status int
 #define TRUE 1
@@ -90,15 +91,23 @@ Status insert(BTree p, int index, Value e, BTree child)
 
 void splitBTree(BTree *T, int mid, BTree *ap)
 {
-    int i = 0;
+    int i, index;
     *ap = NewNode();
-    for (i = mid + 1; i <= (*T)->keynum; i++)
-    {
-        (*ap)->ptr[i] = (*T)->ptr[i];
-    }
+    /*
     for (i = mid; i <= (*T)->keynum; i++)
     {
-        (*ap)->key[i] = (*T)->key[i];
+        (*ap)->ptr[i - mid] = (*T)->ptr[i];
+    }
+    for (i = mid + 1; i <= (*T)->keynum; i++)
+    {
+        (*ap)->key[i - mid] = (*T)->key[i];
+    }
+    */
+    (*ap)->ptr[0] = (*T)->ptr[mid];
+    for (i = mid + 1, index = 1; i <= (*T)->keynum; i++, index++)
+    {
+        (*ap)->ptr[index] = (*T)->ptr[i];
+        (*ap)->key[index] = (*T)->key[i];
     }
     (*ap)->keynum = (*T)->keynum - mid;
     (*T)->keynum = mid - 1;
@@ -121,7 +130,8 @@ Status insertBTree(BTree *T, Value e, BTree q, int i)
 {
     int x = e;
     int finished = 0;
-    BTree ap = NULL;
+    BTree p, ap;
+    p = ap = NULL;
     while (q && !finished)
     {
         insert(q, i, x, ap);
@@ -132,6 +142,7 @@ Status insertBTree(BTree *T, Value e, BTree q, int i)
             int mid = q->keynum / 2 + 1;
             splitBTree(&q, mid, &ap);
             x = q->key[mid];
+            p = q;
             q = q->p;
             if (q)
                 i = Search(q, x); //搜索x在该加入在父节点的哪个位置
@@ -139,7 +150,7 @@ Status insertBTree(BTree *T, Value e, BTree q, int i)
     }
     if (!finished)
     {
-        NewRoot(T, q, x, ap);
+        NewRoot(T, p, x, ap);
     }
     return SUCCESS;
 }
@@ -154,6 +165,14 @@ void NewRoot(BTree *T, BTree l, int midValue, BTree r)
 
 int main()
 {
-
+    BTree T = NULL;
+    insertBTree(&T, 10, NULL, 0);
+    Result rs = SearchBTree(T, 20);
+    insertBTree(&T, 20, rs.pt, rs.i);
+    rs = SearchBTree(T, 30);
+    insertBTree(&T, 30, rs.pt, rs.i);
+    printf("keynum = %d key = %d\n", T->keynum, T->key[1]);
+    printf("keynum = %d key = %d\n", (T->ptr[0])->keynum, (T->ptr[0])->key[1]);
+    printf("keynum = %d key = %d\n", (T->ptr[1])->keynum, (T->ptr[1])->key[1]);
     return 0;
 }
