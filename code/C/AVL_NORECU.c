@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <malloc.h>
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -20,6 +21,7 @@ typedef struct BitNode /* 结点结构 */
     struct BitNode *lchild, *rchild; /* 左右孩子指针 */
 } BitNode, *BiTree;
 
+BiTree **stack = NULL;
 /* 对以p为根的二叉排序树作右旋处理 */
 /* 处理之后p指向新的树根结点，即旋转处理之前的左子树的根结点 */
 //右旋-顺时针旋转(如LL型就得对根结点做该旋转)
@@ -122,78 +124,96 @@ void RightBalance(BiTree *T)
 
 /*  若在平衡的二叉排序树T中不存在和e有相同关键字的结点，则插入一个 */
 /*  数据元素为e的新结点，并返回1，否则返回0。若因插入而使二叉排序树 */
-/*  失去平衡，则作平衡旋转处理，布尔变量taller反映T长高与否。 */
-Status InsertAVL(BiTree *T, int e, Status *taller)
+/*  失去平衡，则作平衡旋转处理，布尔变量tallerer反映T长高与否。 */
+Status InsertAVL(BiTree *T, int e)
 {
-    if (!*T)
+
+    int rear = -1;
+    stack = (BiTree **)malloc((MAXSIZE / 2 + 1) * sizeof(BiTree *));
+    if (stack == NULL)
     {
-        /*  插入新结点，树“长高”，置taller为TRUE */
-        *T = (BiTree)malloc(sizeof(BitNode));
-        (*T)->data = e;
-        (*T)->lchild = (*T)->rchild = NULL;
-        (*T)->bf = EH;
-        *taller = TRUE;
+        printf("malloc error---------------------------------\n");
+        return 0;
     }
-    else
+    stack[++rear] = T;
+
+    int found = 0;
+    int taller = 0;
+    while (!found)
     {
-        if (e == (*T)->data)
+        if (!(*stack[rear]))
         {
-            /*  树中已存在和e有相同关键字的结点则不再插入 */
-            *taller = FALSE;
-            return FALSE;
-        }
-        if (e < (*T)->data)
-        {
-            /*  应继续在T的左子树中进行搜索 */
-            if (!InsertAVL(&(*T)->lchild, e, taller)) /*  未插入 */
-                return FALSE;
-            if (*taller)          /*   已插入到T的左子树中且左子树“长高” */
-                switch ((*T)->bf) /*  检查T的平衡度 */
-                {
-                case LH: /*  原本左子树比右子树高，需要作左平衡处理 */
-                    LeftBalance(T);
-                    *taller = FALSE;
-                    break;
-                case EH: /*  原本左、右子树等高，现因左子树增高而使树增高 */
-                    (*T)->bf = LH;
-                    *taller = TRUE;
-                    break;
-                case RH: /*  原本右子树比左子树高，现左、右子树等高 */
-                    (*T)->bf = EH;
-                    *taller = FALSE;
-                    break;
-                }
+            (*stack[rear]) = (BiTree)malloc(sizeof(BitNode));
+            (*stack[rear])->data = e;
+            (*stack[rear])->lchild = (*stack[rear])->rchild = NULL;
+            (*stack[rear])->bf = EH;
+            found = taller = 1;
         }
         else
         {
-            /*  应继续在T的右子树中进行搜索 */
-            if (!InsertAVL(&(*T)->rchild, e, taller)) /*  未插入 */
+            if (e == (*stack[rear])->data)
             {
-                return FALSE;
+                free(stack);
+                return 0;
             }
-            if (*taller) /*  已插入到T的右子树且右子树“长高” */
+            else if (e < (*stack[rear])->data)
             {
-                switch ((*T)->bf) /*  检查T的平衡度 */
-                {
-                case LH: /*  原本左子树比右子树高，现左、右子树等高 */
-                    (*T)->bf = EH;
-                    *taller = FALSE;
-                    break;
-                case EH: /*  原本左、右子树等高，现因右子树增高而使树增高  */
-                    (*T)->bf = RH;
-                    *taller = TRUE;
-                    break;
-                case RH: /*  原本右子树比左子树高，需要作右平衡处理 */
-                    RightBalance(T);
-                    *taller = FALSE;
-                    break;
-                }
+
+                stack[rear + 1] = &(*stack[rear])->lchild;
+                ++rear;
+            }
+            else
+            {
+                stack[rear + 1] = &(*stack[rear])->rchild;
+                ++rear;
             }
         }
     }
-    return TRUE;
-}
 
+    BiTree p, t;
+    while (taller && rear != 0)
+    {
+        t = *stack[rear];
+        p = *stack[--rear];
+        if (p->lchild == t)
+        {
+            switch (p->bf)
+            {
+            case LH:
+                LeftBalance(stack[rear]);
+                taller = FALSE;
+                break;
+            case EH:
+                p->bf = LH;
+                taller = TRUE;
+                break;
+            case RH:
+                p->bf = EH;
+                taller = FALSE;
+                break;
+            }
+        }
+        else
+        {
+            switch (p->bf)
+            {
+            case LH:
+                p->bf = EH;
+                taller = FALSE;
+                break;
+            case EH:
+                p->bf = RH;
+                taller = TRUE;
+                break;
+            case RH:
+                RightBalance(stack[rear]);
+                taller = FALSE;
+                break;
+            }
+        }
+    }
+    free(stack);
+}
 /* 
 若在平衡的二叉排序树t中存在和e有相同关键字的结点，则删除之 
 并返回TRUE，否则返回FALSE。若因删除而使二叉排序树 
@@ -313,18 +333,16 @@ int main(void)
     gettimeofday(&be, NULL);
     for (i = 0; i < MAXSIZE; i++)
     {
-        InsertAVL(&T, i + random(), &taller);
+        InsertAVL(&T, i + random());
     }
-    gettimeofday(&end, NULL);
     //printf("中序遍历二叉平衡树:\n");
     //InOrderTraverse(T);
-    //    printf("\n");
     printf("删除结点元素5后中序遍历:\n");
-    int shorter;
     //deleteAVL(&T, a[5], &shorter);
     //InOrderTraverse(T);
+    gettimeofday(&end, NULL);
     long b = (end.tv_sec - be.tv_sec) * 1000;
     long e = (end.tv_usec - be.tv_usec) / 1000;
-    printf("time = %ld's\n", b + e);
+    printf("time = %ld' ms\n", e + b);
     return 0;
 }
