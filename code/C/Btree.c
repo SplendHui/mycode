@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <stdlib.h>
+#include <time.h>
+#include <math.h>
 #define M 3
 #define Status int
 #define TRUE 1
@@ -8,6 +10,7 @@
 #define ERROR -1
 #define SUCCESS 1
 #define FAILURE 0
+#define N 30
 typedef int Value;
 typedef struct BTNode
 {
@@ -23,22 +26,38 @@ typedef struct
     int tag;    // tag = 1 success , 0 failed
 } Result;
 
-void NewRoot(BTree *T, BTree l, int x, BTree r);
+void NewRoot(BTree *T, int x, BTree r);
 int Search(BTree T, Value e);
 Result SearchBTree(BTree T, Value e);
 BTree NewNode();
 
+/*
+    在T节点中搜索，使得
+    T->[i] <= e < T->[i+1]
+*/
 int Search(BTree T, Value e)
 {
+    if (!T)
+    {
+        fprintf(stderr, "Search error T is NULL");
+        exit(-1);
+    }
     int i;
 
     for (i = 1; i <= T->keynum; i++)
     {
         if (e < T->key[i])
+        {
             break;
+        }
     }
     return i - 1;
 }
+/*
+    在整个Btree中搜索，值为e元素，如果找到就返回
+    一个Result Result的pt为e所在节点指针并且tag = 1
+    如果没有找到，pt为e应该插入节点指针，并且tag = 0
+*/
 
 Result SearchBTree(BTree T, Value e)
 {
@@ -46,7 +65,7 @@ Result SearchBTree(BTree T, Value e)
     int i, found;
     i = found = 0;
     BTree p = T, q = NULL;
-    while (p != NULL && !found)
+    while (p && !found)
     {
         i = Search(p, e);
         if (i > 0 && p->key[i] == e)
@@ -84,7 +103,7 @@ Status insert(BTree p, int index, Value e, BTree child)
     }
     p->key[index + 1] = e;
     p->keynum++;
-    if (!child)
+    if (child)
         p->ptr[index + 1] = child;
     return SUCCESS;
 }
@@ -93,23 +112,17 @@ void splitBTree(BTree *T, int mid, BTree *ap)
 {
     int i, index;
     *ap = NewNode();
-    /*
-    for (i = mid; i <= (*T)->keynum; i++)
-    {
-        (*ap)->ptr[i - mid] = (*T)->ptr[i];
-    }
-    for (i = mid + 1; i <= (*T)->keynum; i++)
-    {
-        (*ap)->key[i - mid] = (*T)->key[i];
-    }
-    */
     (*ap)->ptr[0] = (*T)->ptr[mid];
-    for (i = mid + 1, index = 1; i <= (*T)->keynum; i++, index++)
+    for (i = mid + 1, index = 1; i <= M; i++, index++)
     {
         (*ap)->ptr[index] = (*T)->ptr[i];
         (*ap)->key[index] = (*T)->key[i];
+        //重新设置父节点
+        if ((*ap)->ptr[index])
+            (*ap)->ptr[index]->p = (*ap);
     }
-    (*ap)->keynum = (*T)->keynum - mid;
+    (*ap)->keynum = M - mid;
+    (*ap)->p = (*T)->p;
     (*T)->keynum = mid - 1;
 }
 
@@ -124,14 +137,15 @@ BTree NewNode()
     }
     for (int i = 0; i < M + 1; i++)
         t->ptr[i] = NULL;
+    t->p = NULL;
     return t;
 }
 Status insertBTree(BTree *T, Value e, BTree q, int i)
 {
     int x = e;
     int finished = 0;
-    BTree p, ap;
-    p = ap = NULL;
+    BTree ap;
+    ap = NULL;
     while (q && !finished)
     {
         insert(q, i, x, ap);
@@ -142,7 +156,6 @@ Status insertBTree(BTree *T, Value e, BTree q, int i)
             int mid = q->keynum / 2 + 1;
             splitBTree(&q, mid, &ap);
             x = q->key[mid];
-            p = q;
             q = q->p;
             if (q)
                 i = Search(q, x); //搜索x在该加入在父节点的哪个位置
@@ -150,29 +163,96 @@ Status insertBTree(BTree *T, Value e, BTree q, int i)
     }
     if (!finished)
     {
-        NewRoot(T, p, x, ap);
+        NewRoot(T, x, ap);
     }
     return SUCCESS;
 }
-void NewRoot(BTree *T, BTree l, int midValue, BTree r)
+void NewRoot(BTree *T, int midValue, BTree ap)
 {
+    BTree p = *T;
     *T = NewNode();
     (*T)->keynum = 1;
     (*T)->key[1] = midValue;
-    (*T)->ptr[0] = l;
-    (*T)->ptr[1] = r;
+    (*T)->ptr[0] = p;
+    (*T)->ptr[1] = ap;
+    //(*T)->ptr[1]->p = (*T);
+    if (ap)
+        (*T)->ptr[1]->p = (*T);
+    if (p)
+        (*T)->ptr[0]->p = (*T);
+}
+
+Status insertBTreeValue(BTree *T, Value v)
+{
+    Result rs = SearchBTree(*T, v);
+    if (rs.tag)
+    {
+        return FAILURE;
+    }
+    insertBTree(T, v, rs.pt, rs.i);
+    return SUCCESS;
+}
+
+void levelTraverse(BTree T)
+{
+    int i;
+    BTree s1[1024], s2[1024];
+    int front1, front2, rear1, rear2;
+    rear1 = rear2 = front1 = front2 = 0;
+    s1[rear1++] = T;
+    BTree p, q;
+    printf("\n----------------------\n");
+    while ((rear1 != front1) || (rear2 != front2))
+    {
+        while (rear1 != front1)
+        {
+            p = s1[front1++];
+            printf("[");
+            for (i = 1; i <= p->keynum; i++)
+            {
+                printf("%d ", p->key[i]);
+            }
+            printf("]");
+            for (i = 0; i <= p->keynum; i++)
+            {
+                if (p->ptr[i])
+                {
+                    s2[rear2++] = p->ptr[i];
+                }
+            }
+        }
+        printf("\n----------------------\n");
+        while (rear2 != front2)
+        {
+            p = s2[front2++];
+            printf("[");
+            for (i = 1; i <= p->keynum; i++)
+            {
+                printf("%d ", p->key[i]);
+            }
+            printf("]");
+            for (i = 0; i <= p->keynum; i++)
+            {
+                if (p->ptr[i])
+                {
+                    s1[rear1++] = p->ptr[i];
+                }
+            }
+        }
+        printf("\n----------------------\n");
+    }
 }
 
 int main()
 {
     BTree T = NULL;
-    insertBTree(&T, 10, NULL, 0);
-    Result rs = SearchBTree(T, 20);
-    insertBTree(&T, 20, rs.pt, rs.i);
-    rs = SearchBTree(T, 30);
-    insertBTree(&T, 30, rs.pt, rs.i);
-    printf("keynum = %d key = %d\n", T->keynum, T->key[1]);
-    printf("keynum = %d key = %d\n", (T->ptr[0])->keynum, (T->ptr[0])->key[1]);
-    printf("keynum = %d key = %d\n", (T->ptr[1])->keynum, (T->ptr[1])->key[1]);
+    int i;
+    //while (scanf("%d", &i))
+    for (int i = 0; i < 30; i++)
+    {
+        insertBTreeValue(&T, i);
+    }
+
+    levelTraverse(T);
     return 0;
 }
