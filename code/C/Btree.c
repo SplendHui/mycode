@@ -2,9 +2,9 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
-#define M 5
-#define N 10
+
+#define M 3
+#define N 30
 typedef int Value;
 
 typedef struct BTNode
@@ -141,14 +141,13 @@ int insert(BTree p, int index, Value e, BTree child)
     for (i = p->keynum; i >= index + 1; i--)
     {
         p->key[i + 1] = p->key[i];
+        p->ptr[i + 1] = p->ptr[i];
     }
     p->key[index + 1] = e;
+    p->ptr[index + 1] = child;
     p->keynum++;
     if (child)
-    {
-        p->ptr[index + 1] = child;
         child->parent = p;
-    }
     return 1;
 }
 
@@ -389,6 +388,7 @@ void borrowFromLeftBother(BTree left, int mid, BTree right)
     for (int i = right->keynum; i >= 0; i--)
         right->ptr[i + 1] = right->ptr[i];
     insert(right, 0, downValue, NULL);
+    right->ptr[1] = right->ptr[0];
     right->ptr[0] = left->ptr[left->keynum];
     father->key[mid] = left->key[left->keynum];
     deleteChild(left, left->keynum);
@@ -441,9 +441,11 @@ int main()
     srandom(time(NULL));
     for (int i = 0; i < N; i++)
     {
-        insertBTreeValue(&T, i);
+        int value = i + random() % 20;
+        printf("insert into %d\n", value);
+        insertBTreeValue(&T, value);
+        levelTraverse(T);
     }
-
     levelTraverse(T);
     while (scanf("%d", &i) == 1)
     {
