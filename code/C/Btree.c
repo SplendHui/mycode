@@ -43,6 +43,7 @@ int mergeTwoChild(BTree left, int mid, BTree right)
     insert(left, left->keynum, downValue, right->ptr[0]);
     for (int i = 1; i <= right->keynum; i++)
         insert(left, left->keynum, right->key[i], right->ptr[i]);
+    free(right);
     deleteChild(father, mid);
     deleteKey(father, mid);
     return 1;
@@ -51,7 +52,6 @@ int mergeTwoChild(BTree left, int mid, BTree right)
 int deleteChild(BTree p, int index)
 {
     int i;
-    free(p->ptr[index]);
     for (i = index; i < p->keynum; i++)
         p->ptr[i] = p->ptr[i + 1];
     p->ptr[i] = NULL;
@@ -385,8 +385,6 @@ void borrowFromLeftBother(BTree left, int mid, BTree right)
 {
     BTree father = left->parent;
     int downValue = father->key[mid];
-    for (int i = right->keynum; i >= 0; i--)
-        right->ptr[i + 1] = right->ptr[i];
     insert(right, 0, downValue, NULL);
     right->ptr[1] = right->ptr[0];
     right->ptr[0] = left->ptr[left->keynum];
@@ -439,19 +437,22 @@ int main()
     BTree T = NULL;
     int i;
     srandom(time(NULL));
-    for (int i = 0; i < N; i++)
+    for (i = 0; i < N; i++)
     {
         int value = i + random() % 20;
         printf("insert into %d\n", value);
         insertBTreeValue(&T, value);
         levelTraverse(T);
     }
+
     levelTraverse(T);
+
     while (scanf("%d", &i) == 1)
     {
         deleteBTreeKey(&T, i);
+        printf("after delete %d\n", i);
         levelTraverse(T);
     }
-    levelTraverse(T);
+
     return 0;
 }
