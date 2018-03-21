@@ -12,7 +12,7 @@ typedef struct BTNode
     int keynum;
     int key[M + 1];
     struct BTNode *ptr[M + 1];
-    struct BTNode *p;
+    struct BTNode *parent;
 } BTNode, *BTree;
 
 typedef struct
@@ -38,7 +38,7 @@ void borrowFromRightBother(BTree left, int mid, BTree right);
 
 int mergeTwoChild(BTree left, int mid, BTree right)
 {
-    BTree father = left->p;
+    BTree father = left->parent;
     int downValue = father->key[mid];
     insert(left, left->keynum, downValue, right->ptr[0]);
     for (int i = 1; i <= right->keynum; i++)
@@ -60,7 +60,7 @@ int deleteChild(BTree p, int index)
 
 int whichSon(BTree p)
 {
-    BTree father = p->p;
+    BTree father = p->parent;
     int i;
     for (i = 0; i <= father->keynum + 1; i++)
     {
@@ -147,7 +147,7 @@ int insert(BTree p, int index, Value e, BTree child)
     if (child)
     {
         p->ptr[index + 1] = child;
-        child->p = p;
+        child->parent = p;
     }
     return 1;
 }
@@ -159,7 +159,7 @@ void splitBTree(BTree *T, int mid, BTree *ap)
     (*ap)->ptr[0] = (*T)->ptr[mid];
     //叶子节点的分裂的话，ptr就可能是NULL
     if ((*ap)->ptr[0])
-        ((*ap)->ptr[0])->p = (*ap);
+        ((*ap)->ptr[0])->parent = (*ap);
     (*T)->ptr[mid] = NULL;
     for (i = mid + 1, index = 1; i <= M; i++, index++)
     {
@@ -168,10 +168,10 @@ void splitBTree(BTree *T, int mid, BTree *ap)
         (*ap)->key[index] = (*T)->key[i];
         //重新设置父节点
         if ((*ap)->ptr[index])
-            (*ap)->ptr[index]->p = (*ap);
+            (*ap)->ptr[index]->parent = (*ap);
     }
     (*ap)->keynum = M - mid;
-    (*ap)->p = (*T)->p;
+    (*ap)->parent = (*T)->parent;
     (*T)->keynum = mid - 1;
 }
 
@@ -186,7 +186,7 @@ BTree NewNode()
     }
     for (int i = 0; i < M + 1; i++)
         t->ptr[i] = NULL;
-    t->p = NULL;
+    t->parent = NULL;
     return t;
 }
 
@@ -206,7 +206,7 @@ int insertBTree(BTree *T, Value e, BTree q, int i)
             int mid = q->keynum / 2 + 1;
             splitBTree(&q, mid, &ap);
             x = q->key[mid];
-            q = q->p;
+            q = q->parent;
             if (q)
                 i = Search(q, x); //搜索x在该加入在父节点的哪个位置
         }
@@ -227,9 +227,9 @@ void NewRoot(BTree *T, int midValue, BTree ap)
     (*T)->ptr[0] = p;
     (*T)->ptr[1] = ap;
     if (ap)
-        (*T)->ptr[1]->p = (*T);
+        (*T)->ptr[1]->parent = (*T);
     if (p)
-        (*T)->ptr[0]->p = (*T);
+        (*T)->ptr[0]->parent = (*T);
 }
 
 int insertBTreeValue(BTree *T, Value v)
@@ -302,7 +302,7 @@ void levelTraverse(BTree T)
 void deleteLeafKey(BTree *T, BTree p, int index)
 {
     int i;
-    if (p->keynum >= (M + 1) / 2 || p->p == NULL)
+    if (p->keynum >= (M + 1) / 2 || p->parent == NULL)
     {                        //如果这个节点的keynum过半，可以直接删除.
         deleteKey(p, index); //比如有30 37 删除30后37应该左移。
         if (p->keynum == 0)
@@ -311,7 +311,7 @@ void deleteLeafKey(BTree *T, BTree p, int index)
     else if (p->keynum < (M + 1) / 2)
     {
         //找到这个是父亲节点的哪个一个节点
-        BTree father = p->p;
+        BTree father = p->parent;
         int pos = whichSon(p);
         deleteKey(p, index);
         if ((i + 1) <= father->keynum && father->ptr[pos + 1] && (father->ptr[pos + 1])->keynum >= (M + 1) / 2)
@@ -330,11 +330,11 @@ void deleteLeafKey(BTree *T, BTree p, int index)
                 mergeTwoChild(father->ptr[pos - 1], pos, father->ptr[pos]);
             else if ((pos + 1) <= father->keynum) //右兄弟存在，与右兄弟合并。
                 mergeTwoChild(father->ptr[pos], pos + 1, father->ptr[pos + 1]);
-            while (father->keynum < ((M + 1) / 2 - 1) && father->p != NULL)
+            while (father->keynum < ((M + 1) / 2 - 1) && father->parent != NULL)
             {
                 BTree son = father;
                 pos = whichSon(son);
-                father = father->p;
+                father = father->parent;
                 if ((pos + 1) <= father->keynum && (father->ptr[pos + 1]->keynum >= (M + 1) / 2)) //右兄弟
                 {
                     borrowFromRightBother(father->ptr[pos], pos + 1, father->ptr[pos + 1]);
@@ -353,11 +353,11 @@ void deleteLeafKey(BTree *T, BTree p, int index)
                         mergeTwoChild(father->ptr[pos - 1], pos, son);
                 }
             }
-            if (father->p == NULL && !father->keynum)
+            if (father->parent == NULL && !father->keynum)
             {
                 free(father);
                 (*T) = father->ptr[0];
-                (*T)->p = NULL;
+                (*T)->parent = NULL;
             }
         }
     }
@@ -374,7 +374,7 @@ int deleteKey(BTree p, int index)
 
 void borrowFromRightBother(BTree left, int mid, BTree right)
 {
-    BTree father = left->p;
+    BTree father = left->parent;
     int downValue = father->key[mid];
     insert(left, left->keynum, downValue, right->ptr[0]);
     father->key[mid] = right->key[1];
@@ -384,7 +384,7 @@ void borrowFromRightBother(BTree left, int mid, BTree right)
 
 void borrowFromLeftBother(BTree left, int mid, BTree right)
 {
-    BTree father = left->p;
+    BTree father = left->parent;
     int downValue = father->key[mid];
     for (int i = right->keynum; i >= 0; i--)
         right->ptr[i + 1] = right->ptr[i];
