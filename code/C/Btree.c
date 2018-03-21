@@ -4,13 +4,7 @@
 #include <time.h>
 #include <math.h>
 #define M 5
-#define Status int
-#define TRUE 1
-#define FALSE 0
-#define ERROR -1
-#define SUCCESS 1
-#define FAILURE 0
-#define N 30
+#define N 10
 typedef int Value;
 
 typedef struct BTNode
@@ -28,62 +22,29 @@ typedef struct
     int tag;    // tag = 1 success , 0 failed
 } Result;
 
-void NewRoot(BTree *T, int x, BTree r);
-int Search(BTree T, Value e);
-Result SearchBTree(BTree T, Value e);
 BTree NewNode();
-int deleteKey(BTree p, Value e);
-int borrow(BTree p, int flag); //向左边还是右边借。
-int deleteChild(BTree p, int index);
 int whichSon(BTree p);
-int mergeTwoChild(BTree p, int pos, int flag);
-Status insert(BTree p, int index, Value e, BTree child);
+int Search(BTree T, Value e);
+Result searchBTreeMin(BTree T);
+int deleteKey(BTree p, Value e);
+int deleteChild(BTree p, int index);
+Result SearchBTree(BTree T, Value e);
+void NewRoot(BTree *T, int x, BTree r);
 void deleteLeafKey(BTree *T, BTree p, int index);
+int mergeTwoChild(BTree left, int mid, BTree right);
+int insert(BTree p, int index, Value e, BTree child);
+void borrowFromLeftBother(BTree left, int mid, BTree right);
+void borrowFromRightBother(BTree left, int mid, BTree right);
 
-void adjustFather(BTree *T, BTree p)
+int mergeTwoChild(BTree left, int mid, BTree right)
 {
-    BTree father = p->p;
-    int i, pos;
-    if (p->keynum >= (M + 1) / 2)
-        return;
-    else
-    {
-    }
-}
-
-int mergeTwoChild(BTree p, int pos, int flag)
-{
-    BTree father = p->p;
-    //flag = 0, p和左兄弟合并
-    int i;
-    if (flag == 0)
-    {
-        int left = pos - 1;
-        BTree leftBother = father->ptr[left];
-        int downValue = father->key[pos];
-        //        printf("down value = %d\n", downValue);
-        insert(leftBother, leftBother->keynum, downValue, p->ptr[0]);
-        for (i = 1; i <= p->keynum; i++)
-            insert(leftBother, leftBother->keynum, p->key[i], p->ptr[i]);
-        deleteChild(father, pos);
-        deleteKey(father, pos);
-    }
-    else if (flag == 1)
-    {
-        int right = pos + 1;
-        int downValue = father->key[pos + 1];
-        BTree rightBother = father->ptr[right];
-        insert(p, p->keynum, downValue, rightBother->ptr[0]);
-        for (i = 1; i <= rightBother->keynum; i++)
-            insert(p, p->keynum, rightBother->key[i], rightBother->ptr[i]);
-        deleteChild(father, right);
-        deleteKey(father, right);
-    }
-    else
-    {
-        fprintf(stderr, "mergeTwoChild error\n");
-        exit(-1);
-    }
+    BTree father = left->p;
+    int downValue = father->key[mid];
+    insert(left, left->keynum, downValue, right->ptr[0]);
+    for (int i = 1; i <= right->keynum; i++)
+        insert(left, left->keynum, right->key[i], right->ptr[i]);
+    deleteChild(father, mid);
+    deleteKey(father, mid);
     return 1;
 }
 
@@ -173,7 +134,7 @@ Result SearchBTree(BTree T, Value e)
     return r;
 }
 
-Status insert(BTree p, int index, Value e, BTree child)
+int insert(BTree p, int index, Value e, BTree child)
 {
 
     int i;
@@ -188,7 +149,7 @@ Status insert(BTree p, int index, Value e, BTree child)
         p->ptr[index + 1] = child;
         child->p = p;
     }
-    return SUCCESS;
+    return 1;
 }
 
 void splitBTree(BTree *T, int mid, BTree *ap)
@@ -220,7 +181,7 @@ BTree NewNode()
     t = (BTree)malloc(sizeof(BTNode));
     if (!t)
     {
-        fprintf(stderr, "NewNode malloc error");
+        fprintf(stderr, "NewNode malloc error\n");
         exit(-1);
     }
     for (int i = 0; i < M + 1; i++)
@@ -229,7 +190,7 @@ BTree NewNode()
     return t;
 }
 
-Status insertBTree(BTree *T, Value e, BTree q, int i)
+int insertBTree(BTree *T, Value e, BTree q, int i)
 {
     int x = e;
     int finished = 0;
@@ -239,7 +200,7 @@ Status insertBTree(BTree *T, Value e, BTree q, int i)
     {
         insert(q, i, x, ap);
         if (q->keynum < M)
-            finished = TRUE;
+            finished = 1;
         else
         {
             int mid = q->keynum / 2 + 1;
@@ -254,7 +215,7 @@ Status insertBTree(BTree *T, Value e, BTree q, int i)
     {
         NewRoot(T, x, ap);
     }
-    return SUCCESS;
+    return 1;
 }
 
 void NewRoot(BTree *T, int midValue, BTree ap)
@@ -271,20 +232,25 @@ void NewRoot(BTree *T, int midValue, BTree ap)
         (*T)->ptr[0]->p = (*T);
 }
 
-Status insertBTreeValue(BTree *T, Value v)
+int insertBTreeValue(BTree *T, Value v)
 {
     Result rs = SearchBTree(*T, v);
     if (rs.tag)
     {
         printf("%d exits\n", v);
-        return FAILURE;
+        return -1;
     }
     insertBTree(T, v, rs.pt, rs.i);
-    return SUCCESS;
+    return 1;
 }
 
 void levelTraverse(BTree T)
 {
+    if (T == NULL)
+    {
+        printf("T is NULL\n");
+        return;
+    }
     int i;
     BTree s1[1024], s2[1024];
     int front1, front2, rear1, rear2;
@@ -345,93 +311,46 @@ void deleteLeafKey(BTree *T, BTree p, int index)
     else if (p->keynum < (M + 1) / 2)
     {
         //找到这个是父亲节点的哪个一个节点
-        BTree p1 = p->p;
-        i = whichSon(p);
+        BTree father = p->p;
+        int pos = whichSon(p);
         deleteKey(p, index);
-        // p1 是要删除元素所在节点的父节点
-        //找到它父亲的哪一个子节点.然后才能找到兄弟节点。
-        //M = 3 keynum = 2可以借，  M= 5 keynum >= 3 能借。
-        if ((i + 1) <= p1->keynum && p1->ptr[i + 1] && (p1->ptr[i + 1])->keynum >= (M + 1) / 2)
+        if ((i + 1) <= father->keynum && father->ptr[pos + 1] && (father->ptr[pos + 1])->keynum >= (M + 1) / 2)
         { //右兄弟存在，向右兄弟借
             printf("borrow from right\n");
-            int bValue = borrow(p1->ptr[i + 1], 1);
-            insert(p, p->keynum, p1->key[i + 1], NULL); //父节点的值放入左节点,也就是被删除节
-            p1->key[i + 1] = bValue;                    //把借来的值放到父节点
+            borrowFromRightBother(father->ptr[pos], pos + 1, father->ptr[pos + 1]);
         }
-        else if ((i - 1) >= 0 && p1->ptr[i - 1] && (p1->ptr[i - 1])->keynum >= (M + 1) / 2)
+        else if ((pos - 1) >= 0 && father->ptr[pos - 1] && (father->ptr[pos - 1])->keynum >= (M + 1) / 2)
         { //左兄弟存在，且大于一半，向他借。
             printf("borrow from left\n");
-            int bValue = borrow(p1->ptr[i - 1], 0);
-            insert(p, 0, p1->key[i], NULL); //父节点的值放入右节点,也就是被删除节点
-            p1->key[i] = bValue;            //把借来的值放到父节点
+            borrowFromLeftBother(father->ptr[pos - 1], pos, father->ptr[pos]);
         }
         else
-        { //左兄弟不存在或者有兄弟不存在，就算存在也帮不了。
-            printf("merge \n");
-            //i 是p节点在父亲节点的索引
-            if ((i - 1) >= 0) //左兄弟存在；与左兄弟合并.
-            {
-                //父节点下降一个
-                mergeTwoChild(p, i, 0);
-            }
-            else if ((i + 1) <= p1->keynum) //右兄弟存在，与右兄弟合并。
-            {
-                //下降一个
-                mergeTwoChild(p, i, 1);
-            }
-            else
-            {
-                fprintf(stderr, "error\n");
-                exit(-1);
-            }
-            BTree father = p->p;
-            BTree son;
-            int pos;
+        {                       //左兄弟不存在或者有兄弟不存在，就算存在也帮不了。
+            if ((pos - 1) >= 0) //左兄弟存在；与左兄弟合并.
+                mergeTwoChild(father->ptr[pos - 1], pos, father->ptr[pos]);
+            else if ((pos + 1) <= father->keynum) //右兄弟存在，与右兄弟合并。
+                mergeTwoChild(father->ptr[pos], pos + 1, father->ptr[pos + 1]);
             while (father->keynum < ((M + 1) / 2 - 1) && father->p != NULL)
             {
-                printf("while \n");
-                son = father;
+                BTree son = father;
                 pos = whichSon(son);
                 father = father->p;
-                if ((pos + 1) <= father->keynum && father->keynum >= (M + 1) / 2) //右兄弟
+                if ((pos + 1) <= father->keynum && (father->ptr[pos + 1]->keynum >= (M + 1) / 2)) //右兄弟
                 {
-                    if (father->ptr[pos + 1]->keynum >= (M + 1) / 2)
-                    {
-                        int downValue = father->key[pos + 1];
-                        BTree rightBother = father->ptr[pos + 1];
-                        father->key[pos + 1] = rightBother->key[1];
-                        insert(son, son->keynum - 1, downValue, rightBother->ptr[0]);
-                        deleteChild(rightBother, 0);
-                        deleteKey(rightBother, 1);
-                        return;
-                    }
+                    borrowFromRightBother(father->ptr[pos], pos + 1, father->ptr[pos + 1]);
+                    return;
                 }
-                else if ((pos - 1) >= 0) // 左兄弟
+                else if ((pos - 1) >= 0 && (father->ptr[pos - 1]->keynum >= (M + 1) / 2)) // 左兄弟
                 {
-                    if (father->ptr[pos - 1]->keynum >= (M + 1) / 2)
-                    {
-                        int downValue = father->key[pos];
-                        BTree leftBother = father->ptr[pos - 1];
-                        father->key[pos] = leftBother->key[leftBother->keynum];
-                        insert(son, 0, downValue, NULL);
-                        for (int i = son->keynum - 2; i >= 0; i--)
-                            son->ptr[i + 1] = son->ptr[i];
-                        son->ptr[0] = leftBother->ptr[leftBother->keynum];
-                        deleteChild(leftBother, leftBother->keynum);
-                        deleteKey(leftBother, leftBother->keynum);
-                        return;
-                    }
+                    borrowFromLeftBother(father->ptr[pos - 1], pos, father->ptr[pos]);
+                    return;
                 }
                 else
                 {
                     if ((pos + 1) <= father->keynum)
-                    {
-                        mergeTwoChild(son, pos, 1);
-                    }
+                        mergeTwoChild(son, pos + 1, father->ptr[pos + 1]);
                     else
-                    {
-                        mergeTwoChild(son, pos, 0);
-                    }
+                        mergeTwoChild(father->ptr[pos - 1], pos, son);
                 }
             }
             if (father->p == NULL && !father->keynum)
@@ -453,36 +372,74 @@ int deleteKey(BTree p, int index)
     return 1;
 }
 
-int borrow(BTree p, int flag) //向左边还是右边借。
+void borrowFromRightBother(BTree left, int mid, BTree right)
 {
-    //flag = 0, 左边, 1 右边
-    int i, x;
-    if (flag)
+    BTree father = left->p;
+    int downValue = father->key[mid];
+    insert(left, left->keynum, downValue, right->ptr[0]);
+    father->key[mid] = right->key[1];
+    deleteChild(right, 0);
+    deleteKey(right, 1);
+}
+
+void borrowFromLeftBother(BTree left, int mid, BTree right)
+{
+    BTree father = left->p;
+    int downValue = father->key[mid];
+    for (int i = right->keynum; i >= 0; i--)
+        right->ptr[i + 1] = right->ptr[i];
+    insert(right, 0, downValue, NULL);
+    right->ptr[0] = left->ptr[left->keynum];
+    father->key[mid] = left->key[left->keynum];
+    deleteChild(left, left->keynum);
+    deleteKey(left, left->keynum);
+}
+
+int deleteBTreeKey(BTree *T, Value v)
+{
+    if ((*T) == NULL)
     {
-        //向右边借，借小的
-        x = p->key[1]; //借一个最小的，
-        for (i = 1; i < p->keynum; i++)
-        {
-            p->key[i] = p->key[i + 1];
-        }
-        p->keynum--;
+        fprintf(stderr, "Tree is Empty\n");
+        return 0;
+    }
+    Result r = SearchBTree(*T, v);
+    if (r.pt->ptr[0] == NULL && r.tag)
+        deleteLeafKey(T, r.pt, r.i);
+    else if (r.pt->ptr[0] != NULL && r.tag)
+    {
+        Result min = searchBTreeMin(r.pt->ptr[r.i]);
+        r.pt->key[r.i] = min.pt->key[min.i];
+        deleteLeafKey(T, min.pt, min.i);
     }
     else
     {
-        x = p->key[p->keynum];
-        p->keynum--;
-        //向左边借，借最大的。
+        printf("no found\n");
+        return 0;
     }
-    return x;
+    return 1;
+}
+
+Result searchBTreeMin(BTree T)
+{
+    int min;
+    Result rs;
+    BTree pre = NULL;
+    while (T)
+    {
+        pre = T;
+        T = T->ptr[0];
+    }
+    rs.pt = pre;
+    rs.tag = rs.i = 1;
+    return rs;
 }
 
 int main()
 {
     BTree T = NULL;
     int i;
-    //while (scanf("%d", &i))
     srandom(time(NULL));
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < N; i++)
     {
         insertBTreeValue(&T, i);
     }
@@ -490,20 +447,9 @@ int main()
     levelTraverse(T);
     while (scanf("%d", &i) == 1)
     {
-        Result r = SearchBTree(T, i);
-        printf("%d %d\n", r.i, r.pt->key[1]);
-        deleteLeafKey(&T, r.pt, r.i);
+        deleteBTreeKey(&T, i);
         levelTraverse(T);
     }
-
-    //printf("left child %d\n", r.pt->ptr[0]->key[1]);
-    /*
-    r = SearchBTree(T, 16);
-    printf("16 father is %d\n", r.pt->p->key[1]);
-    levelTraverse(T);
-    printf("!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-    deleteBtreeKey(&T, r.pt, 16);
-     **/
     levelTraverse(T);
     return 0;
 }
