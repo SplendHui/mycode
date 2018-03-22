@@ -255,7 +255,7 @@ void levelTraverse(BTree T)
     int front1, front2, rear1, rear2;
     rear1 = rear2 = front1 = front2 = 0;
     s1[rear1++] = T;
-    BTree p, q;
+    BTree p;
     printf("\n----------------------\n");
     while ((rear1 != front1) || (rear2 != front2))
     {
