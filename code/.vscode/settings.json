@@ -1,7 +1,10 @@
 {
     "files.associations": {
         "stdio.h": "c",
-        "pthread.h": "c"
+        "pthread.h": "c",
+        "libio.h": "c",
+        "array": "cpp",
+        "initializer_list": "cpp"
     },
     "python.linting.enabled": false
 }

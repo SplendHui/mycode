@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <sys/time.h>
+#include <time.h>
 #include <unistd.h>
 
 #define OK 1
@@ -306,7 +307,6 @@ int main(void)
 {
     int i;
     struct timeval be, end;
-    int a[10] = {3, 2, 1, 4, 5, 6, 7, 10, 9, 8};
     srandom(time(NULL));
     BiTree T = NULL;
     Status taller;
@@ -320,7 +320,6 @@ int main(void)
     //InOrderTraverse(T);
     //    printf("\n");
     printf("删除结点元素5后中序遍历:\n");
-    int shorter;
     //deleteAVL(&T, a[5], &shorter);
     //InOrderTraverse(T);
     long b = (end.tv_sec - be.tv_sec) * 1000;
