@@ -6,7 +6,12 @@
 #include <deque>
 #include <string>
 #include <algorithm>
+#include <stack>
+#include <queue>
 using namespace std;
+bool isShorter(const string &s1, const string &s2);
+string make_plural(size_t ctr, const string &word, const string &ending);
+void fcn1();
 int main()
 {
 
@@ -122,7 +127,7 @@ int main()
         /*terminate called after throwing an instance of 'std::out_of_range'
         what() : vector::_M_range_check : __n(which is 0) >= this->size()(which is 0)
         Aborted(core dumped) */
-        // list和forward_list 的迭代器不能与数字进行运算
+        // list和forward_list 的迭代器不能与数字进行运
         vector<string> v;
         v.begin() + 2;
     }
@@ -183,5 +188,135 @@ int main()
         v1.begin() + 1;
     }
 
+    {
+        stack<int> s1;
+        for (int i = 0; i < 10; i++)
+        {
+            s1.push(i);
+            // 不能调用 s1.push_back(i + 1);
+        }
+        priority_queue<int> pq;
+        pq.push(1);
+        pq.pop();
+        cout << "pq size = " << pq.size() << endl;
+        ;
+    }
+
+    cout << "---------------algorithm-----------------------------" << endl;
+
+    {
+
+        vector<int> v1 = {1, 2, 3, 4};
+        int sum = accumulate(v1.begin(), v1.end(), 0);
+        vector<string> v2 = {"1", "2", "3"};
+        string s = accumulate(v2.begin(), v2.end(), string(""));
+        cout << "s = " << s << endl;
+        // 不能把整数加到字符串上.
+
+        vector<int> v3 = v1;
+        v3 = v1;
+        // 报错 equal(v1.begin(), v1.end(), v2.begin());
+        cout << equal(v1.begin(), v1.end(), v3.begin()) << endl;
+
+        // fill
+        fill(v1.begin(), v1.end(), 0);
+        fill_n(v1.begin(), v1.size(), 0);
+        // fill_n 如果v1 是空那就会出错。
+        vector<int> t1;
+        // fill_n(t1.begin(), 10, 0);
+        // 导致非法访问
+        auto it = back_inserter(t1);
+        fill_n(back_inserter(t1), 10, 0);
+        cout << "t1 size = " << t1.size() << endl;
+
+        int a1[] = {0, 1, 2, 3, 4, 5, 6};
+        int a2[sizeof(a1) / sizeof(*a1)];
+        auto ret = copy(begin(a1), end(a1), a2);
+
+        list<int> ilst = {1, 2, 3, 4, 5};
+
+        replace(ilst.begin(), ilst.end(), 1, 11);
+        vector<int> ivec;
+        replace_copy(ilst.cbegin(), ilst.cend(), back_inserter(ivec), 0, 42);
+        // ivec包含了ilst的拷贝
+        cout << "size = " << ivec.size() << " first value = " << *ivec.begin() << endl;
+        // size = 5 first value = 11
+
+        // sort
+        vector<string> words = {"fox", "jumps", "the", "red", "over", "quick", "red", "slow", "the", "no", "the1"};
+        sort(words.begin(), words.end());
+        auto end_unique = unique(words.begin(), words.end());
+        words.erase(end_unique, words.end());
+        for (auto w : words)
+            cout << w << endl;
+        sort(words.begin(), words.end(), isShorter);
+        stable_sort(words.begin(), words.end(), isShorter);
+        // lambda
+        stable_sort(words.begin(), words.end(), [](const string &s1, const string &s2) {
+            cout << "hello lambda" << endl;
+            return s1.size() < s2.size();
+        });
+        // find_if()
+        int sz = 5;
+        auto wc = find_if(words.begin(), words.end(), [sz](const string &s1) { return s1.size() >= sz; });
+        auto count = words.end() - wc;
+        cout << count << " " << make_plural(count, "word", "s") << " of length = " << sz << " or longer " << endl;
+
+        for_each(wc, words.end(), [](const string &s) { cout << s << " "; });
+        cout << endl;
+        for (auto w : words)
+            cout << w << endl;
+        cout << endl;
+        fcn1();
+    }
+
+    cout << "---------------algorithm-----------------------------" << endl;
+
     return 0;
+}
+
+bool isShorter(const string &s1, const string &s2)
+{
+    return s1.size() > s2.size();
+}
+string make_plural(size_t ctr, const string &word, const string &ending)
+{
+    return (ctr > 1) ? word + ending : word;
+}
+void fcn1()
+{
+    size_t v1 = 42;
+    auto f = [v1] { return v1; };
+    v1 = 0;
+    auto j = f();
+    cout << "fcn1' s = " << j << endl;
+    // j = 42 也就是说lambda在创建的时候就保存了v1的拷贝，不管后面怎么变，还是原来的值
+}
+void biggies(vector<string> &words, vector<string>::size_type sz, ostream &os = cout, char c = ' ')
+{
+    // io对象是不能拷贝的，因为也不能当参数也函数进行调用,引用却可以 。
+    //lambda表达式可以获取在当前作用域中可见的名字，比如全局变量，std里面的等等。
+    for_each(words.begin(), words.end(), [&os, c](const string &s) { os << s << c; });
+    // = 为默认值捕获, &则是引用
+    for_each(words.begin(), words.end(), [=, &os](const string &s) { os << s << c; });
+}
+void fcn3()
+{
+    // 可以修改局部变量
+    size_t v1 = 42;
+    auto f = [v1]() mutable { return ++v1; };
+    v1 = 0;
+    auto j = f(); // j = 43;
+}
+void fcn4()
+{
+    // 可以修改局部变量
+    size_t v1 = 42;
+    auto f = [&v1]() mutable { return ++v1; };
+    v1 = 0;
+    auto j = f(); // j = 1;
+    const size_t v2 = 42;
+    // auto f1 = [&v2]() mutable { return ++v2; };
+    // 如果是const 则不能进行修改
+    j = f();
 }
