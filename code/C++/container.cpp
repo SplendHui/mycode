@@ -8,10 +8,13 @@
 #include <algorithm>
 #include <stack>
 #include <queue>
+#include <functional>
 using namespace std;
+using namespace std::placeholders;
 bool isShorter(const string &s1, const string &s2);
 string make_plural(size_t ctr, const string &word, const string &ending);
 void fcn1();
+bool check_size(const string &s, string::size_type sz);
 int main()
 {
 
@@ -20,6 +23,10 @@ int main()
     */
     {
         vector<int> v;
+        for (int i = 0; i < 5; i++)
+        {
+        }
+
         for (int i = 0; i < 5; i++)
             v.push_back(i);
         vector<int>::iterator begin = v.begin();
@@ -271,6 +278,16 @@ int main()
     }
 
     cout << "---------------algorithm-----------------------------" << endl;
+    /*
+        bind library
+     */
+
+    {
+        auto check6 = bind(check_size, _1, 6);
+        string s = "hello";
+        bool b1 = check6(s);
+        // auto wc = find_if(words.begin(), words.end(),bind(check_size, _1, sz));
+    }
 
     return 0;
 }
@@ -319,4 +336,8 @@ void fcn4()
     // auto f1 = [&v2]() mutable { return ++v2; };
     // 如果是const 则不能进行修改
     j = f();
+}
+bool check_size(const string &s, string::size_type sz)
+{
+    return s.size() >= sz;
 }
