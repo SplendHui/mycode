@@ -34,6 +34,9 @@ int main()
             ivec.push_back(i);
             ivec.push_back(i);
         }
+        set<int> iset(ivec.cbegin(), ivec.cend());
+        multiset<int> miset(ivce.cbegin(), ivce.cend());
+        multiset<int> miset(ivec.cbegin(), ivce.cend());
     }
 
     return 0;
