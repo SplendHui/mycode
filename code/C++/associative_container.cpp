@@ -8,6 +8,7 @@ int main()
     // map
     {
         map<string, size_t> word_count;
+        map<string, string> authors = {{"Joyce", "James"}, {"Austen", "Jane"}, {"Dickens", "Charles"}};
         string word;
         //while (cin >> word)
         //    ++word_count[word];
@@ -26,7 +27,6 @@ int main()
             cout << w.first << " occurs " << w.second << ((w.second > 1) ? " times " : " time ") << endl;
     }
     {
-        map<string, string> authors = {{"Joyce", "James"}, {"Austen", "Jane"}, {"Dickens", "Charles"}};
     }
 
     return 0;
