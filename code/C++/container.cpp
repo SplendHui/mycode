@@ -289,6 +289,23 @@ int main()
         // auto wc = find_if(words.begin(), words.end(),bind(check_size, _1, sz));
     }
 
+    /*
+        inserter
+    */
+    list<int> lst = {1, 2, 3, 4};
+    list<int> lst2, lst3;
+    copy(lst.cbegin(), lst.cend(), front_inserter(lst2));
+    // result : 4 3 2 1
+    copy(lst.cbegin(), lst.cend(), inserter(lst3, lst3.begin()));
+    // result : 1 2 3 4
+
+    // istream_iterator<int> int_it(cin);
+    // istream_iterator<int> int_eof;
+    string line = string("hello, welcome!");
+    auto rcomma = find(line.crbegin(), line.crend(), ',');
+    cout << string(line.crbegin(), rcomma) << endl;
+    // i don't know why that is wrong :
+    // cout << string(rcomma.base(), line.end()) << "11" << endl;
     return 0;
 }
 
