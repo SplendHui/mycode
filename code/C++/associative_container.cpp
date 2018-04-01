@@ -71,6 +71,7 @@ int main()
         }
         cout << *set_it << endl;
     }
+
     {
         map<string, size_t> word_count;
         string word;
@@ -86,8 +87,31 @@ int main()
         multimap<string, string> authors;
         authors.insert({"Barth, John", "Sot-Weed Factor"});
         authors.insert({"Barth, John", "Lost in the Funhouse"});
+        authors.insert({"Barth, 1", "1 in the Funhouse"});
+        authors.insert({"Barth, 2", "2 in the Funhouse"});
         for (auto t : authors)
             cout << t.first << " " << t.second << endl;
+        // auto cnt = authors.erase("Barth, John");
+        // cout << "cnt = " << cnt << endl;
+        string search_item = "Barth, John";
+        auto entries = authors.count(search_item);
+        auto iter = authors.find(search_item);
+        while (entries)
+        {
+            cout << iter->second << endl;
+            ++iter;
+            --entries;
+        }
+        for (auto beg = authors.lower_bound(search_item),
+                  end = authors.upper_bound(search_item);
+             beg != end; ++beg)
+            cout << beg->second << endl;
+        for (auto pos = authors.equal_range(search_item); pos.first != pos.second; ++pos.first)
+            cout << pos.first->second << endl;
+
+        authors.erase(++authors.begin(), --authors.end());
+        // 删除的不包括 end，
+        cout << authors.size() << endl;
     }
     return 0;
 }
