@@ -2,6 +2,7 @@
 #include <set>
 #include <map>
 #include <string>
+#include <vector>
 using namespace std;
 int main()
 {
@@ -27,6 +28,12 @@ int main()
             cout << w.first << " occurs " << w.second << ((w.second > 1) ? " times " : " time ") << endl;
     }
     {
+        vector<int> ivec;
+        for (vector<int>::size_type i = 0; i != 10; ++i)
+        {
+            ivec.push_back(i);
+            ivec.push_back(i);
+        }
     }
 
     return 0;
