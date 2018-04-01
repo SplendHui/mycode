@@ -25,6 +25,9 @@ int main()
         for (const auto &w : word_count)
             cout << w.first << " occurs " << w.second << ((w.second > 1) ? " times " : " time ") << endl;
     }
+    {
+        map<string, string> authors = {{"Joyce", "James"}, {"Austen", "Jane"}, {"Dickens", "Charles"}};
+    }
 
     return 0;
 }
