@@ -35,7 +35,10 @@ int main()
             ivec.push_back(i);
         }
         set<int> iset(ivec.cbegin(), ivec.cend());
-        multiset<int> miset(ivec.cbegin(), ivce.cend());
+        multiset<int> miset(ivec.cbegin(), ivec.cend());
+        cout << ivec.size() << endl;
+        cout << iset.size() << endl;
+        cout << miset.size() << endl;
     }
 
     return 0;
