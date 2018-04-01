@@ -306,6 +306,7 @@ int main()
     cout << string(line.crbegin(), rcomma) << endl;
     // i don't know why that is wrong :
     // cout << string(rcomma.base(), line.end()) << "11" << endl;
+
     return 0;
 }
 
@@ -329,6 +330,7 @@ void fcn1()
 void biggies(vector<string> &words, vector<string>::size_type sz, ostream &os = cout, char c = ' ')
 {
     // io对象是不能拷贝的，因为也不能当参数也函数进行调用,引用却可以 。
+    // 通过 cref返回一个可以拷贝的对象 const &类型
     //lambda表达式可以获取在当前作用域中可见的名字，比如全局变量，std里面的等等。
     for_each(words.begin(), words.end(), [&os, c](const string &s) { os << s << c; });
     // = 为默认值捕获, &则是引用
