@@ -4,18 +4,37 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <fstream>
+#include <sstream>
 #include <new>
+#include <set>
 
 using namespace std;
 vector<int> createVector();
-
+void runQueries(ifstream &infile);
 class QueryResult;
+class TextQuery;
+ostream &print(ostream &os, const QueryResult &qr);
+class QueryResult
+{
+    friend std::ostream &print(std::ostream &, const QueryResult &);
+
+  public:
+    using line_no = std::vector<std::string>::size_type;
+    QueryResult(std::string s, std::shared_ptr<std::set<line_no>> p,
+                std::shared_ptr<std::vector<std::string>> f) : sought(s), lines(p), file(f) {}
+
+  private:
+    std::string sought;
+    std::shared_ptr<std::set<line_no>> lines;
+    std::shared_ptr<std::vector<std::string>> file;
+};
 class TextQuery
 {
   public:
     using line_no = std::vector<std::string>::size_type;
     TextQuery(std::ifstream &);
-    QueryResult query(const std ::string &) const;
+    QueryResult query(const std::string &) const;
 
   private:
     std::shared_ptr<std::vector<std::string>> file;
@@ -41,6 +60,28 @@ TextQuery::TextQuery(ifstream &is) : file(new vector<string>)
             lines->insert(n);
         }
     }
+}
+ostream &print(ostream &os, const QueryResult &qr)
+{
+    os << qr.sought << " occurs " << qr.lines->size() << " "
+       << ((qr.lines->size() > 1)
+               ? "times"
+               : "time")
+       << endl;
+    for (auto num : *qr.lines)
+    {
+        os << "\t(line " << num + 1 << ") " << *(qr.file->begin() + num) << endl;
+    }
+    return os;
+}
+QueryResult TextQuery::query(const string &sought) const
+{
+    static shared_ptr<set<line_no>> nodata(new set<line_no>);
+    auto loc = wm.find(sought);
+    if (loc == wm.end())
+        return QueryResult(sought, nodata, file);
+    else
+        return QueryResult(sought, loc->second, file);
 }
 int main()
 {
@@ -182,6 +223,9 @@ int main()
         vector<string> vs = {"one", "two", "three", "four"};
         cout << vs[0] << endl;
     }
+    // ifstream mfile("/home/splend/github/code/C++/infile");
+    ifstream mfile("infile");
+    runQueries(mfile);
     return 0;
 }
 vector<int> createVector()
@@ -191,7 +235,7 @@ vector<int> createVector()
 
 void runQueries(ifstream &infile)
 {
-    TextQuery ta(infile);
+    TextQuery tq(infile);
     while (true)
     {
         cout << "enter a word to look for, or q to quit :";
