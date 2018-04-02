@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 #include <memory>
 #include <vector>
 #include <list>
@@ -7,6 +8,40 @@
 
 using namespace std;
 vector<int> createVector();
+
+class QueryResult;
+class TextQuery
+{
+  public:
+    using line_no = std::vector<std::string>::size_type;
+    TextQuery(std::ifstream &);
+    QueryResult query(const std ::string &) const;
+
+  private:
+    std::shared_ptr<std::vector<std::string>> file;
+    std::map<std::string, std::shared_ptr<std::set<line_no>>> wm;
+};
+
+TextQuery::TextQuery(ifstream &is) : file(new vector<string>)
+{
+    string text;
+    while (getline(is, text))
+    {
+        file->push_back(text);
+        int n = file->size() - 1;
+        istringstream line(text);
+        string word;
+        while (line >> word)
+        {
+            auto &lines = wm[word];
+            if (!lines)
+            {
+                lines.reset(new set<line_no>);
+            }
+            lines->insert(n);
+        }
+    }
+}
 int main()
 {
     { // 智能指针
@@ -88,9 +123,81 @@ int main()
         *p += " 11";
         cout << "*p = " << *p << endl;
     }
+    // weak_prt
+    {
+
+        auto p = make_shared<int>(42);
+        weak_ptr<int> wp(p);
+        if (shared_ptr<int> np = wp.lock())
+        {
+            // through lock function determine whether references exists or not
+        }
+    }
+
+    {
+        int *pia = new int[10];          // non initialize
+        int *pia2 = new int[10]();       //already initialize 0
+        string *psa = new string[10];    // ten empty string
+        string *psa2 = new string[10](); // ten empty string
+
+        // char arr[0]; // error
+        char *cp = new char[0]; // correct , but cp can't *cp
+        unique_ptr<int[]> up(new int[10]);
+        // shared_ptr don't directly support dynamic array
+        for (int i = 0; i != 10; i++)
+            up[i] = i;
+        up.release(); // auto call delete[] to destroy pointer
+
+        shared_ptr<int> sp(new int[10], [](int *p) { delete[] p; });
+        for (size_t i = 0; i != 10; ++i)
+            *(sp.get() + i) = i;
+        sp.reset();
+    }
+    // allocator
+    {
+        int n = 10;
+        allocator<string> alloc;
+        auto const p = alloc.allocate(n); // allocate n non-initialize string
+
+        auto q = p;
+        alloc.construct(q++, 10, 'c');
+        cout << "after alloc.construct " << *p << endl;
+        alloc.construct(q++, "hi");
+        // if p is not initialize , it is a disaster
+        while (q != p)
+            alloc.destroy(--q);
+        // we just only call destroy for constructed object;
+
+        alloc.deallocate(p, n); // n must be equal to initial distribution
+
+        allocator<int> alloc1;
+        vector<int> vi = {1, 2, 3, 4, 5};
+        auto p1 = alloc1.allocate(vi.size() * 2);
+        auto q1 = uninitialized_copy(vi.begin(), vi.end(), p1);
+        uninitialized_fill_n(q1, vi.size(), 42);
+        cout << "*p1 = " << (*p1) << " q1 = " << *q1 << endl;
+    }
+
+    {
+        vector<string> vs = {"one", "two", "three", "four"};
+        cout << vs[0] << endl;
+    }
     return 0;
 }
 vector<int> createVector()
 {
     return vector<int>(10);
+}
+
+void runQueries(ifstream &infile)
+{
+    TextQuery ta(infile);
+    while (true)
+    {
+        cout << "enter a word to look for, or q to quit :";
+        string s;
+        if (!(cin >> s) || s == "q")
+            break;
+        print(cout, tq.query(s)) << endl;
+    }
 }
