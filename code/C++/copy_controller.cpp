@@ -66,7 +66,8 @@ class HasPtr
 inline void swap(HasPtr &lhs, HasPtr &rhs)
 {
     cout << "swap" << endl;
-    //using std::swap;
+    using std::swap;
+    // 用了using 后如果有类型的swap优于std::swap
     swap(lhs.ps, rhs.ps);
     swap(lhs.i, rhs.i);
 }
