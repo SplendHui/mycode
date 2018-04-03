@@ -2,6 +2,7 @@
 #include <string>
 using namespace std;
 class Sale_Item;
+inline void swap(HasPtr &lhs, HasPtr &rhs);
 class Sale_Item
 {
   public:
@@ -131,6 +132,7 @@ int main()
     sale_Item.printBook();
     HasPtr h1("1");
     HasPtr h2(h1);
+    swap(h1, h2);
     h2 = h1;
     h1.print();
     h1 = h1;
