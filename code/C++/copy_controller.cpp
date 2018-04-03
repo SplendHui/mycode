@@ -67,7 +67,8 @@ inline void swap(HasPtr &lhs, HasPtr &rhs)
 {
     cout << "swap" << endl;
     using std::swap;
-    // 用了using 后如果有类型的swap优于std::swap
+    // 用了using 后,其他类型swap优于std::swap,如果没有就用std::swap
+    // 这个例子中没有特别，所以还是调用std::swap的;
     swap(lhs.ps, rhs.ps);
     swap(lhs.i, rhs.i);
 }
