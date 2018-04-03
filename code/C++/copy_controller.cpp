@@ -61,6 +61,12 @@ class HasPtr
     std::string *ps;
     int i;
 };
+inline void swap(HasPtr &lhs, HasPtr &rhs)
+{
+    using std::swap;
+    swap(lhs.ps, rhs.ps);
+    swap(lhs.i, rhs.i);
+}
 HasPtr &HasPtr::operator=(const HasPtr &rhs)
 {
     auto newp = new string(*rhs.ps);
