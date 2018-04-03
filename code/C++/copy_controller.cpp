@@ -63,6 +63,7 @@ class HasPtr
 };
 inline void swap(HasPtr &lhs, HasPtr &rhs)
 {
+    cout << "swap" << endl;
     using std::swap;
     swap(lhs.ps, rhs.ps);
     swap(lhs.i, rhs.i);
