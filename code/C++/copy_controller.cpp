@@ -27,6 +27,13 @@ Sale_Item::Sale_Item(string bno, string bname, double pce)
 Sale_Item::Sale_Item(const Sale_Item &it)
 {
 }
+struct NoCopy
+{
+    NoCopy() = default;
+    NoCopy(const NoCopy &);
+    NoCopy &operator=(const NoCopy &) = delete;
+    ~NoCopy() = delete;
+};
 int main()
 {
     Sale_Item sale_Item("1", "C++ primer", 5.5);
