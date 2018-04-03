@@ -41,6 +41,13 @@ struct NoDtor
 };
 int main()
 {
+    /*
+    {
+        NoDtor nd; // error 
+        NoDtor *p = new NoDtor();
+        delete p; //error
+    }
+    */
     Sale_Item sale_Item("1", "C++ primer", 5.5);
     Sale_Item s1(sale_Item);
     sale_Item.printBook();
