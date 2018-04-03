@@ -34,6 +34,11 @@ struct NoCopy
     NoCopy &operator=(const NoCopy &) = delete;
     ~NoCopy() = delete;
 };
+struct NoDtor
+{
+    NoDtor() = default;
+    ~NoDtor() = delete;
+};
 int main()
 {
     Sale_Item sale_Item("1", "C++ primer", 5.5);
