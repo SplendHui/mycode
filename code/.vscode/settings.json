@@ -4,7 +4,8 @@
         "pthread.h": "c",
         "libio.h": "c",
         "array": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "string": "cpp"
     },
     "python.linting.enabled": false
 }
