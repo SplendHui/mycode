@@ -85,6 +85,7 @@ QueryResult TextQuery::query(const string &sought) const
 }
 int main()
 {
+
     { // 智能指针
         shared_ptr<vector<int>> p;
         shared_ptr<string> p1;
