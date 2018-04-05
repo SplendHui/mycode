@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <new>
 
 using namespace std;
 
@@ -10,6 +11,7 @@ class HasPtr
   public:
     HasPtr(const std::string &s = std::string()) : ps(new std::string(s)), i(0)
     {
+        cout << "std::string()" << endl;
         cout << "std::string()" << endl;
     }
     HasPtr(HasPtr &&p) noexcept : ps(p.ps), i(p.i)
@@ -82,11 +84,13 @@ int main()
     cout << v1.capacity() << endl;
 
     HasPtr hp2("hp2");
-    HasPtr hp = hp2;
+    HasPtr hp1(hp2);
+
+    //    HasPtr hp = hp2;
     // HasPtr hp = std::move(hp2);
     // HasPtr hp;
     // hp = hp2;
-    cout << *hp.ps << endl;
+    //cout << *hp.ps << endl;
 
     return 0;
 }

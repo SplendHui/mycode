@@ -5,7 +5,8 @@
         "libio.h": "c",
         "array": "cpp",
         "initializer_list": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "ostream": "cpp"
     },
     "python.linting.enabled": false
 }
