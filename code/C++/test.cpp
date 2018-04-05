@@ -21,10 +21,10 @@ class HasPtr
 
         cout << "hasptr &p" << endl;
     }
-    HasPtr &operator=(const HasPtr rhs)
+    HasPtr &operator=(HasPtr rhs) noexcept
     {
         cout << "=" << endl;
-        swap(*this, rhs); // 这会造成无限递归
+        std::swap(*this, rhs); // 这会造成无限递归
         // ps = rhs.ps;
         // i = rhs.i;
         return *this;
