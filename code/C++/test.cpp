@@ -4,6 +4,7 @@
 
 using namespace std;
 
+void swap(string *&p1, string *&p2);
 class HasPtr
 {
   public:
@@ -21,7 +22,7 @@ class HasPtr
 
         cout << "hasptr &p" << endl;
     }
-    HasPtr &operator=(const HasPtr rhs) noexcept
+    HasPtr &operator=(HasPtr rhs) noexcept
     {
         cout << "=" << endl;
         swap(ps, rhs.ps); // 这会造成无限递归
@@ -80,7 +81,7 @@ int main()
     //     cout << v1.capacity() << endl;
     //     v1.push_back(c3);
     //     cout << v1.capacity() << endl;
-    HasPtr hp2;
+    HasPtr hp2("hp2");
     //HasPtr hp = hp2;
     HasPtr hp = std::move(hp2);
     hp = hp2;
