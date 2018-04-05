@@ -9,6 +9,7 @@
 #include <stack>
 #include <queue>
 #include <functional>
+#include <memory>
 using namespace std;
 using namespace std::placeholders;
 bool isShorter(const string &s1, const string &s2);
