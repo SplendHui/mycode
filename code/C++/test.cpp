@@ -24,7 +24,7 @@ class HasPtr
     HasPtr &operator=(HasPtr rhs)
     {
         cout << "=" << endl;
-        //std::swap(*this, rhs);
+        //std::swap(*this, rhs); // 这会造成无限递归
         ps = rhs.ps;
         i = rhs.i;
         return *this;
