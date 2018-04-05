@@ -80,9 +80,10 @@ int main()
     cout << v1.capacity() << endl;
     v1.push_back(c3);
     cout << v1.capacity() << endl;
+
     HasPtr hp2("hp2");
-    // HasPtr hp = hp2;
-    HasPtr hp = std::move(hp2);
+    HasPtr hp = hp2;
+    // HasPtr hp = std::move(hp2);
     // HasPtr hp;
     // hp = hp2;
     cout << *hp.ps << endl;
