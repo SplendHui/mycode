@@ -24,7 +24,7 @@ class HasPtr
     HasPtr &operator=(const HasPtr rhs) noexcept
     {
         cout << "=" << endl;
-        swap(*this, rhs); // 这会造成无限递归
+        swap(ps, rhs.ps); // 这会造成无限递归
         // 由于swap 里面两次调用=,所以自己重新实现swap就可以解决
         // ps = rhs.ps;
         // i = rhs.i;
@@ -36,6 +36,12 @@ class HasPtr
     int i;
 };
 
+void swap(string *&p1, string *&p2)
+{
+    string *t = p1;
+    p1 = p2;
+    p2 = p1;
+}
 class Cat
 {
   private:
