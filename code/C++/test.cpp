@@ -32,7 +32,6 @@ class HasPtr
         return *this;
     }
 
-  private:
     std::string *ps;
     int i;
 };
@@ -82,9 +81,11 @@ int main()
     //     v1.push_back(c3);
     //     cout << v1.capacity() << endl;
     HasPtr hp2("hp2");
-    //HasPtr hp = hp2;
-    HasPtr hp = std::move(hp2);
-    hp = hp2;
+    HasPtr hp = hp2;
+    // HasPtr hp = std::move(hp2);
+    HasPtr hp;
+    // hp = hp2;
+    cout << *hp.ps << endl;
 
     return 0;
 }
