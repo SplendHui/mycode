@@ -69,21 +69,21 @@ class Cat
 
 int main()
 {
-    //     Cat c1;
-    //     Cat c2;
-    //     Cat c3;
-    //     vector<Cat> v1;
-    //     cout << v1.capacity() << endl;
-    //     v1.push_back(c1);
-    //     cout << v1.capacity() << endl;
-    //     v1.push_back(c1);
-    //     cout << v1.capacity() << endl;
-    //     v1.push_back(c3);
-    //     cout << v1.capacity() << endl;
+    Cat c1;
+    Cat c2;
+    Cat c3;
+    vector<Cat> v1;
+    cout << v1.capacity() << endl;
+    v1.push_back(c1);
+    cout << v1.capacity() << endl;
+    v1.push_back(c1);
+    cout << v1.capacity() << endl;
+    v1.push_back(c3);
+    cout << v1.capacity() << endl;
     HasPtr hp2("hp2");
-    HasPtr hp = hp2;
-    // HasPtr hp = std::move(hp2);
-    HasPtr hp;
+    // HasPtr hp = hp2;
+    HasPtr hp = std::move(hp2);
+    // HasPtr hp;
     // hp = hp2;
     cout << *hp.ps << endl;
 
