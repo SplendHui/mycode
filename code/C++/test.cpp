@@ -8,12 +8,20 @@ class A
   public:
     A()
     {
-        //cout << "A construct" << endl;
+        cout << "A construct" << endl;
     }
     A(const A &a)
     {
         this->a = a.a;
         cout << "copy construct" << endl;
+    }
+    A(A &&a)
+    {
+        cout << "&&a" << endl;
+    }
+    A &operator=(A &&a)
+    {
+        cout << "= &&a" << endl;
     }
 
   private:
