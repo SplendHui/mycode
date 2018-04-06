@@ -86,7 +86,7 @@ StrVec &StrVec::operator=(const StrVec &rhs) //赋值运算符
     return *this;
 }
 
-StrVec::StrVec &operator=(std::initializer_list<std::string>)
+StrVec &StrVec::operator=(std::initializer_list<std::string>)
 {
 }
 StrVec &StrVec::operator=(StrVec &&rhs) noexcept
