@@ -32,7 +32,7 @@ int main()
     // cout << "----------------------------" << endl;
     // cout << v2.size() << endl;
     //auto v2c = std::move(v2);
-    for (auto f : std::move(v2))
+    for (auto f : v2)
     {
         // cout << " nice " << endl;
     }
