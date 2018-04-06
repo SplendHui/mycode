@@ -40,9 +40,10 @@ int main()
     // cout << "----------------------------" << endl;
     // cout << v2.size() << endl;
     //auto v2c = std::move(v2);
-    for (auto f : v2)
-    {
-        // cout << " nice " << endl;
-    }
+    // for (auto f : v2)
+    // {
+    //     cout << " nice " << endl;
+    // }
+
     return 0;
 }
