@@ -29,12 +29,12 @@ int main()
         A *a = new A();
         v2.insert(v2.begin(), a);
     }
-    cout << "----------------------------" << endl;
-    cout << v2.size() << endl;
+    // cout << "----------------------------" << endl;
+    // cout << v2.size() << endl;
     auto v2c = std::move(v2);
     for (auto f : v2c)
     {
-        cout << " nice " << endl;
+        // cout << " nice " << endl;
     }
     return 0;
 }
