@@ -10,6 +10,7 @@ class StrVec
     // 移动构造函数
     StrVec(StrVec &&s) noexcept;
     StrVec &operator=(const StrVec &); //赋值运算符
+    StrVec &operator=(std::initializer_list<std::string>);
     StrVec &StrVec::operator=(StrVec &&rhs) noexcept;
     ~StrVec();                                            //析构函数
     void push_back(const std::string &);                  //向尾部添加字符串
@@ -85,6 +86,9 @@ StrVec &StrVec::operator=(const StrVec &rhs) //赋值运算符
     return *this;
 }
 
+StrVec::StrVec &operator=(std::initializer_list<std::string>)
+{
+}
 StrVec &StrVec::operator=(StrVec &&rhs) noexcept
 {
     if (this != &rhs)
