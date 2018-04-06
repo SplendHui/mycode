@@ -24,7 +24,7 @@ int main()
 
     vector<A> v1;
     set<A *> v2;
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 10000000; i++)
     {
         A *a = new A();
         v2.insert(v2.begin(), a);
