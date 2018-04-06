@@ -27,7 +27,7 @@ int main()
         v1.push_back(a);
     }
     cout << "----------------------------" << endl;
-    for (auto f : v1)
+    for (auto &f : v1)
     {
         cout << " nice " << endl;
     }
