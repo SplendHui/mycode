@@ -133,10 +133,12 @@ int main()
     Sale_Item sale_Item("1", "C++ primer", 5.5);
     Sale_Item s1(sale_Item);
     sale_Item.printBook();
-    HasPtr h1("1");
-    HasPtr h2(h1);
+    HasPtr h1("1"); // 调用constructor
+    HasPtr h2(h1);  // 调用copy constructor
+    HasPtr h3 = h2; // 调用copy construct
     swap(h1, h2);
-    h2 = h1;
+    h2 = h1; // 调用 = operator
+    // h2 = std::move(h1); // 调用 operator=(HasPtr &&) //  move
     h1.print();
     h1 = h1;
     h2.print();
