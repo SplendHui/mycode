@@ -27,7 +27,7 @@ int main()
     for (int i = 0; i < 10; i++)
     {
         A *a = new A();
-        v2.insert(v2.begin, a);
+        v2.insert(v2.begin(), a);
     }
     cout << "----------------------------" << endl;
     cout << v2.size() << endl;
