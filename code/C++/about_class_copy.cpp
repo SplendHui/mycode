@@ -12,7 +12,6 @@ class HasPtr
     HasPtr(const std::string &s = std::string()) : ps(new std::string(s)), i(0)
     {
         cout << "std::string()" << endl;
-        cout << "std::string()" << endl;
     }
     HasPtr(HasPtr &&p) noexcept : ps(p.ps), i(p.i)
     {
@@ -24,7 +23,7 @@ class HasPtr
 
         cout << "hasptr &p" << endl;
     }
-    HasPtr &operator=(HasPtr rhs) noexcept
+    HasPtr &operator=(HasPtr &&rhs) noexcept
     {
         cout << "=" << endl;
         swap(ps, rhs.ps); // 这会造成无限递归
@@ -71,23 +70,28 @@ class Cat
 
 int main()
 {
-    Cat c1;
-    Cat c2;
-    Cat c3;
-    vector<Cat> v1;
-    cout << v1.capacity() << endl;
-    v1.push_back(c1);
-    cout << v1.capacity() << endl;
-    v1.push_back(c1);
-    cout << v1.capacity() << endl;
-    v1.push_back(c3);
-    cout << v1.capacity() << endl;
+    // Cat c1;
+    // Cat c2;
+    // Cat c3;
+    // vector<Cat> v1;
+    // cout << v1.capacity() << endl;
+    // v1.push_back(c1);
+    // cout << v1.capacity() << endl;
+    // v1.push_back(c1);
+    // cout << v1.capacity() << endl;
+    // v1.push_back(c3);
+    // cout << v1.capacity() << endl;
 
     HasPtr hp2("hp2");
     HasPtr hp1(hp2);
 
-    //    HasPtr hp = hp2;
-    // HasPtr hp = std::move(hp2);
+    //HasPtr hp = hp2;
+
+    HasPtr hp = std::move(hp2);
+    cout << "---------------" << endl;
+    //    hp = hp2;
+    cout << "---------------" << endl;
+    hp = std::move(hp2);
     // HasPtr hp;
     // hp = hp2;
     //cout << *hp.ps << endl;
