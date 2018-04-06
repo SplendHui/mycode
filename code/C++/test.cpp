@@ -31,7 +31,8 @@ int main()
     }
     cout << "----------------------------" << endl;
     cout << v2.size() << endl;
-    for (auto f : v2)
+    auto v2c = std::move(v2);
+    for (auto f : v2c)
     {
         cout << " nice " << endl;
     }
