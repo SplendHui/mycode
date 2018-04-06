@@ -21,13 +21,13 @@ int main()
 {
 
     vector<A> v1;
+    vector<A *> v2;
     for (int i = 0; i < 10; i++)
     {
-        A a;
-        v1.push_back(a);
+        v2.insert(v2.begin, new A());
     }
     cout << "----------------------------" << endl;
-    for (auto &f : v1)
+    for (auto &f : v2)
     {
         cout << " nice " << endl;
     }
