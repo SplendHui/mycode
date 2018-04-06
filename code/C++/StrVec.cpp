@@ -86,8 +86,13 @@ StrVec &StrVec::operator=(const StrVec &rhs) //赋值运算符
     return *this;
 }
 
-StrVec &StrVec::operator=(std::initializer_list<std::string>)
+StrVec &StrVec::operator=(std::initializer_list<std::string> il)
 {
+    auto data = alloc_n_copy(il.begin(), il.end());
+    free();
+    elements = data.first;
+    first_free = cap = data.second;
+    return *this;
 }
 StrVec &StrVec::operator=(StrVec &&rhs) noexcept
 {
