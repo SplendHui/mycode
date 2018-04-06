@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <set>
 using namespace std;
 class A
 {
@@ -24,7 +25,8 @@ int main()
     set<A *> v2;
     for (int i = 0; i < 10; i++)
     {
-        v2.insert(v2.begin, new A());
+        A *a = new A();
+        v2.insert(v2.begin, a);
     }
     cout << "----------------------------" << endl;
     cout << v2.size() << endl;
