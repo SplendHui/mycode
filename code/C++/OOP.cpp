@@ -62,8 +62,8 @@ int main()
     // print_total(cout, basic, 20);
     // print_total(cout, bulk, 20);
 
-    Quote item;
-    Bulk_quote bulk;
+    Quote item("java", 10.5);
+    Bulk_quote bulk("C++", 20.5, 10, 0.3);
     Quote *p = &item;
     p = &bulk;
     Quote &r = bulk;
