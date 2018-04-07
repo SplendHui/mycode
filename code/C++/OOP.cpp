@@ -27,7 +27,11 @@ class Bulk_quote : public Quote
 {
   public:
     Bulk_quote() = default;
-    Bulk_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), min_qty(qty), discount(disc) {}
+    Bulk_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), min_qty(qty), discount(disc)
+    {
+
+        price = 11;
+    }
     double net_price(std::size_t cnt) const
     {
         cout << "Bulk_quote" << endl;
