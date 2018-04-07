@@ -11,6 +11,7 @@ class Quote
 
     virtual double net_price(std::size_t n) const
     {
+        cout << "Quote" << endl;
         return n * price;
     }
     virtual ~Quote() = default;
@@ -29,6 +30,7 @@ class Bulk_quote : public Quote
     Bulk_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), min_qty(qty), discount(disc) {}
     double net_price(std::size_t cnt)
     {
+        cout << "Bulk_quote" << endl;
         if (cnt >= min_qty)
             return cnt * (1 - discount) * price;
         else
