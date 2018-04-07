@@ -28,7 +28,7 @@ class Bulk_quote : public Quote
   public:
     Bulk_quote() = default;
     Bulk_quote(const std::string &book, double p, std::size_t qty, double disc) : Quote(book, p), min_qty(qty), discount(disc) {}
-    double net_price(std::size_t cnt)
+    double net_price(std::size_t cnt) const
     {
         cout << "Bulk_quote" << endl;
         if (cnt >= min_qty)
@@ -44,7 +44,7 @@ class Bulk_quote : public Quote
 
 double print_total(ostream &os, const Quote &item, size_t n)
 {
-    double ret = item.net_price(n);
+    double ret = item.net_price(n); // 常亮引用,必须调用常量的成员函数.
     os << "ISBN: " << item.isbn()
        << " # sold: " << n << " total due: " << ret << endl;
     return ret;
