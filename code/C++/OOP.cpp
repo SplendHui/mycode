@@ -65,6 +65,14 @@ class Derived : public Base
     void f(const Derived &);
 };
 
+void Derived::f(const Derived &derived_obj)
+{
+    Base::statemem();
+    Derived::statemem();
+    derived_obj.statemem();
+    statemem();
+}
+
 int main()
 {
     // Quote basic;
