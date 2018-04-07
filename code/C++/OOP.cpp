@@ -54,6 +54,17 @@ double print_total(ostream &os, const Quote &item, size_t n)
     return ret;
 }
 
+class Base
+{
+  public:
+    static void statemem();
+};
+
+class Derived : public Base
+{
+    void f(const Derived &);
+};
+
 int main()
 {
     // Quote basic;
