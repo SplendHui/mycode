@@ -2,6 +2,7 @@
 #include <vector>
 #include <set>
 #include <new>
+#include "Sales_item.hpp"
 using namespace std;
 class A
 {
@@ -27,6 +28,7 @@ class A
   private:
     int a;
 };
+
 int main()
 {
 
