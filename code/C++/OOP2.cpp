@@ -47,6 +47,7 @@ class Prot_Derv : protected Base
 
 class Derived_from_Public : public Pub_Derv
 {
+  public:
     int use_base()
     {
         return prot_mem;
