@@ -26,10 +26,6 @@ class A
     }
 
   private:
-    ~A()
-    {
-        cout << "destroy A" << endl;
-    }
     int a;
 };
 
