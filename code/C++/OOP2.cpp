@@ -43,16 +43,16 @@ class Prot_Derv : protected Base
         pub_mem();
         return 1;
     }
+    ~Prot_Derv() { cout << "Prot_Derv destroy"; }
 };
 
 class Derived_from_Public : public Pub_Derv
 {
-  public:
     int use_base()
     {
         return prot_mem;
     }
-    Derived_from_Public() { cout << "Derived_from_Public destroy" << endl; }
+    ~Derived_from_Public() {}
 };
 
 class Derived_from_Private : public Priv_Derv
