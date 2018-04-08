@@ -22,7 +22,7 @@ class Pub_Derv : public Base
     int f() { return prot_mem; }
     // 没有访问权限
     // char g() { return priv_mem; }
-    virtual ~Pub_Derv() { cout << "Pub_Derv destroy" << endl; }
+    ~Pub_Derv() { cout << "Pub_Derv destroy" << endl; }
 };
 
 class Priv_Derv : private Base
@@ -48,6 +48,7 @@ class Prot_Derv : protected Base
 
 class Derived_from_Public : public Pub_Derv
 {
+  public:
     int use_base()
     {
         return prot_mem;
