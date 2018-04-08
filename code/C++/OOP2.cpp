@@ -7,6 +7,7 @@ class Base
   public:
     void pub_mem() { cout << "pub_mem()" << endl; }
     friend void acc();
+    virtual ~Base() = default;
 
   protected:
     int prot_mem = 10;
