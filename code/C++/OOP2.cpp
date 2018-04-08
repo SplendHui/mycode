@@ -19,6 +19,7 @@ class Base
 class Pub_Derv : public Base
 {
 
+  public:
     int f() { return prot_mem; }
     // 没有访问权限
     // char g() { return priv_mem; }
