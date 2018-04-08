@@ -7,7 +7,10 @@ class Quote
 public:
   Quote() = default;
   Quote(const std::string &book, double sales_price) : bookNo(book), price(sales_price) {}
-  std::string isbn() const { return bookNo; }
+  std::string isbn() const
+  {
+    return bookNo;
+  }
 
   virtual double net_price(std::size_t n) const
   {
@@ -21,7 +24,7 @@ private:
 
 protected:
   double price = 0.0;
-}
+};
 
 class Disc_quote : public Quote
 {
@@ -60,7 +63,8 @@ private:
   double discount = 0.0;
 };
 
-double print_total(ostream &os, const Quote &item, size_t n)
+double
+print_total(ostream &os, const Quote &item, size_t n)
 {
   double ret = item.net_price(n); // 常亮引用,必须调用常量的成员函数.
   os << "ISBN: " << item.isbn()
@@ -68,7 +72,6 @@ double print_total(ostream &os, const Quote &item, size_t n)
      << ret << endl;
   return ret;
 }
-
 int main()
 {
   // Quote basic;
