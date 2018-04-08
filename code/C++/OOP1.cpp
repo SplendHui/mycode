@@ -102,6 +102,7 @@ int main()
   // 只有当表达式是引用,或者指针的时候,才进行动态绑定.
   Quote *p = &item;
   p = &bulk;
+  cout << bulk.net_price(10);
   print_total(cout, item, 10);
   print_total(cout, bulk, 10);
 
