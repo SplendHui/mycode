@@ -1,5 +1,7 @@
 #include <iostream>
+#include <set>
 using namespace std;
+
 class Quote
 {
 public:
@@ -19,7 +21,7 @@ private:
 
 protected:
   double price = 0.0;
-};
+}
 
 class Disc_quote : public Quote
 {
