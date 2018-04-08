@@ -26,11 +26,20 @@ class A
     }
 
   private:
+    ~A()
+    {
+        cout << "destroy A" << endl;
+    }
     int a;
+};
+
+class B : public A
+{
 };
 
 int main()
 {
+    B b;
 
     vector<A> v1;
     set<A *> v2;
