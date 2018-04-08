@@ -48,7 +48,7 @@ public:
   {
     cout << "Bulk_quote" << endl;
 
-    if (cnt >= min_qty)
+    if (cnt >= quantity)
       return cnt * (1 - discount) * price;
     else
       return cnt * price;
@@ -97,7 +97,7 @@ int main()
   // print_total(cout, bulk, 20);
 
   Quote item("java", 10.5);
-  Bulk_quote bulk("C++", 20.5, 3, 0.3);
+  Bulk_quote bulk("C++", 20.5, 20, 0.3);
   // 如果Quote类型的变量就永远是一个Quote对象,
   // 只有当表达式是引用,或者指针的时候,才进行动态绑定.
   Quote *p = &item;
