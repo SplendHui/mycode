@@ -30,6 +30,8 @@ class Priv_Derv : private Base
 {
   public:
     int f1() const { return prot_mem; }
+
+  private:
     ~Priv_Derv() { cout << "Priv_Derv destroy" << endl; }
     friend void acc();
 };
