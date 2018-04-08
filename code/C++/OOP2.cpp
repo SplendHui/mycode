@@ -22,7 +22,7 @@ class Pub_Derv : public Base
     int f() { return prot_mem; }
     // 没有访问权限
     // char g() { return priv_mem; }
-    ~Pub_Derv() { cout << "Pub_Derv destroy" << endl; }
+    virtual ~Pub_Derv() { cout << "Pub_Derv destroy" << endl; }
 };
 
 class Priv_Derv : private Base
