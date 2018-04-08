@@ -60,33 +60,13 @@ private:
   double discount = 0.0;
 };
 
-double
-print_total(ostream &os, const Quote &item, size_t n)
+double print_total(ostream &os, const Quote &item, size_t n)
 {
   double ret = item.net_price(n); // 常亮引用,必须调用常量的成员函数.
   os << "ISBN: " << item.isbn()
      << " # sold: " << n << " total due: "
      << ret << endl;
   return ret;
-}
-
-class Base
-{
-public:
-  static void statemem();
-};
-
-class Derived : public Base
-{
-  void f(const Derived &);
-};
-
-void Derived::f(const Derived &derived_obj)
-{
-  // Base::statemem();
-  // Derived::statemem();
-  // derived_obj.statemem();
-  // statemem();
 }
 
 int main()
