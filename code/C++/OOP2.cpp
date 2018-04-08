@@ -7,7 +7,7 @@ class Base
   public:
     void pub_mem() { cout << "pub_mem()" << endl; }
     friend void acc();
-    virtual ~Base() { cout << "Base destroy" }
+    virtual ~Base() { cout << "Base destroy" << endl; }
 
   protected:
     int prot_mem = 10;
@@ -52,7 +52,7 @@ class Derived_from_Public : public Pub_Derv
     {
         return prot_mem;
     }
-    virtual ~Derived_from_Public() { cout << "Derived_from_Public destroy" << endl; }
+    ~Derived_from_Public() { cout << "Derived_from_Public destroy" << endl; }
 };
 
 class Derived_from_Private : public Priv_Derv
