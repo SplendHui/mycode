@@ -22,14 +22,14 @@ class Pub_Derv : public Base
     int f() { return prot_mem; }
     // 没有访问权限
     // char g() { return priv_mem; }
-    virtual ~Pub_Derv() { cout << "Pub_Derv destroy" << endl; }
+    ~Pub_Derv() { cout << "Pub_Derv destroy" << endl; }
 };
 
 class Priv_Derv : private Base
 {
   public:
     int f1() const { return prot_mem; }
-    virtual ~Priv_Derv() { cout << "Priv_Derv destroy" << endl; }
+    ~Priv_Derv() { cout << "Priv_Derv destroy" << endl; }
     friend void acc();
 };
 
