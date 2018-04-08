@@ -48,22 +48,7 @@ class Bulk_quote : public Quote
     double discount = 0.0;
 };
 
-class Disc_quote : public Quote
-{
-  public:
-    Disc_quote() = default;
-    Disc_quote(const std::string &book, double price, std::size_t qty, double disc) : Quote(book, price), quantity(qty), discount(disc) {}
-    double net_price(std::size_t, std::string s = "Dis_quote default") const = 0;
-
-  protected:
-    std::size_t quantity = 0;
-    double discount = 0.0;
-
-  private:
-};
-
-double
-print_total(ostream &os, const Quote &item, size_t n)
+double print_total(ostream &os, const Quote &item, size_t n)
 {
     double ret = item.net_price(n); // 常亮引用,必须调用常量的成员函数.
     os << "ISBN: " << item.isbn()
