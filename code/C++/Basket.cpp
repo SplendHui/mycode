@@ -15,6 +15,7 @@ class Basket
     {
         return lhs->isbn() < rhs->isbn();
     }
+    std::multiset<std::shared_ptr<Quote>, decltype(compare) *> items{compare};
 };
 
 int main()
