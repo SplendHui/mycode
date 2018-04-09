@@ -72,6 +72,7 @@ print_total(ostream &os, const Quote &item, size_t n)
      << ret << endl;
   return ret;
 }
+/*
 int main()
 {
   // Quote basic;
@@ -92,3 +93,4 @@ int main()
 
   return 0;
 }
+*/
