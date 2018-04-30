@@ -18,6 +18,10 @@ class StudentId
         cout << "StudentId(int id) " << endl;
         this->id = id;
     }
+    ~StudentId()
+    {
+        cout << "~Student" << endl;
+    }
 };
 
 class Student
