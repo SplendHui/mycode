@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 using namespace std;
 void print(int);
 
@@ -20,5 +21,8 @@ int main(int argc, char **argv)
     // cout << *(argv + 30) << endl;
     const int value = 10;
     print(value);
+    string s1;
+    cin >> s1;
+    cout << s1 << endl;
     return 0;
 }
