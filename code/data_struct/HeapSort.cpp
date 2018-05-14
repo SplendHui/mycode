@@ -13,11 +13,11 @@ void adjust(keytype k[], int i, int n)
 
     while (j <= n)
     {
-        if (j < n && k[j] < k[j + 1])
+        if (j < n && k[j] < k[j + 1]) // 改为 k[j] < k[j+1]
         {
             j++;
         }
-        if (tmp >= k[j])
+        if (tmp >= k[j]) // 改为 tmp <= k[j]
         {
             break;
         }
@@ -33,7 +33,7 @@ void HeapSort(keytype k[], int n)
     {
         adjust(k, i, n);
     }
-    int tmp;
+    keytype tmp;
     for (int i = n - 1; i >= 1; i--)
     {
         tmp = k[i + 1];
